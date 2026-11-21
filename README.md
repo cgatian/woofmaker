@@ -7,9 +7,9 @@ Live at **[woofmaker.org](https://www.woofmaker.org)**. A fan-made revival of th
 ## How it works
 
 - Everything happens in the visitor's browser. Their photo is never uploaded, and the server only serves static files.
-- `public/scene/` holds the pre-built scene: a sprite sheet of the GIF frames, a sprite sheet of Kevin's thumbs, and `scene.json` with the photo's four corners in every frame.
+- `public/scene/` holds the pre-built scene (22:54 to 23:00.9 of the film, 8 fps, 480 px wide): a few small sprite sheets of the GIF frames, sprite sheets of Kevin's thumbs, and `scene.json` with the photo's four corners in every frame.
 - `public/js/render.js` warps the visitor's photo into those corners (a perspective transform per frame), puts the thumbs back on top, adds film-style color and grain, and draws the captions.
-- `public/js/gif-worker.js` encodes the GIF in a Web Worker with [gifenc](https://github.com/mattdesl/gifenc).
+- `public/js/gif-worker.js` encodes the GIF in a Web Worker with [gifenc](https://github.com/mattdesl/gifenc). The GIF is 360 px wide and always under 1 MB: unchanged pixels are skipped between frames, and if a photo still makes the file too big the worker retries with smaller settings (the `LADDER` at the top of the file).
 
 ## Run locally
 
