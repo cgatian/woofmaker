@@ -74,6 +74,20 @@ async function startDemo() {
   demo.closest('.stage').classList.add('ready');
 }
 
+// ---------- "WOOFs made" counter (old-school hit counter) ----------
+function showCount(n) {
+  if (!Number.isSafeInteger(n)) return;
+  const box = $('#counter');
+  $('#digits').replaceChildren(...String(n).padStart(6, '0').split('').map(d => {
+    const cell = document.createElement('span');
+    cell.textContent = d;
+    return cell;
+  }));
+  box.setAttribute('aria-label', `${n.toLocaleString('en-US')} WOOFs made so far`);
+  box.hidden = false;
+}
+fetch('/api/count').then(r => r.json()).then(d => showCount(d.count)).catch(() => {});
+
 // ---------- picking a photo ----------
 for (const input of [$('#cam'), $('#pick')]) {
   input.addEventListener('change', async () => {
@@ -281,6 +295,11 @@ $('#make').addEventListener('click', async () => {
       };
       $('#save').href = state.gifUrl;
       setProgress(1, 'WOOF! Ready to share.');
+      // Add one to the site-wide counter and tell them which number they made.
+      fetch('/api/count', { method: 'POST' }).then(r => r.json()).then(d => {
+        showCount(d.count);
+        if (d.counted) setProgress(1, `WOOF #${d.count.toLocaleString('en-US')}! Ready to share.`);
+      }).catch(() => {});
     }
   };
   worker.onerror = e => {

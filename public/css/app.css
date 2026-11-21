@@ -83,6 +83,21 @@ h2 { font: 400 22px/1.2 "Lilita One", system-ui, sans-serif; margin: 0; }
   border-radius: 50%; background: var(--green); color: #fff; font-size: 15px;
 }
 
+/* ---------- "WOOFs made" counter: a 90s-style hit counter ---------- */
+.counter { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 22px 0 4px; }
+.digits {
+  display: inline-flex; gap: 2px; padding: 4px;
+  background: #000; border: 3px ridge #a9a9a9; border-radius: 2px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .5);
+}
+.digits span {
+  display: grid; place-items: center; width: 24px; height: 34px;
+  background: linear-gradient(#1c1c1c, #000 55%, #141414);
+  color: #39ff14; text-shadow: 0 0 6px rgba(57, 255, 20, .75);
+  font: 700 24px/1 "Courier New", Courier, monospace;
+}
+.counter-label { color: var(--muted); font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; }
+
 /* ---------- buttons ---------- */
 .actions { display: grid; gap: 10px; padding: 16px 0 calc(16px + var(--safe-b)); margin-top: auto; }
 .actions.sticky {

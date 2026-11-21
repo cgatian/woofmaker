@@ -1,9 +1,11 @@
-// Tiny static server for Railway. All GIF making happens in the visitor's browser.
+// Tiny static server for Railway. All GIF making happens in the visitor's browser;
+// the only thing the server stores is the "WOOFs made" count (see counter.js).
 import { createServer } from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
 import { extname, join, normalize, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { gzipSync } from 'node:zlib';
+import { getCount, increment } from './counter.js';
 
 const ROOT = dirname(fileURLToPath(import.meta.url));
 const PUBLIC = join(ROOT, 'public');
@@ -80,6 +82,22 @@ const server = createServer(async (req, res) => {
   if (host === alternate) {
     res.writeHead(301, { Location: `https://${CANONICAL_HOST}${url.pathname}${url.search}` });
     return res.end();
+  }
+  // The "WOOFs made" counter: GET reads it, POST adds one.
+  if (url.pathname === '/api/count') {
+    let counted;
+    if (req.method === 'POST') {
+      // Only our own pages may count; other sites' pages can't bump it.
+      const origin = req.headers.origin;
+      const ours = !origin || [CANONICAL_HOST, alternate, 'localhost', '127.0.0.1'].includes(new URL(origin).hostname);
+      const ip = (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || req.socket.remoteAddress || 'unknown';
+      counted = ours && increment(ip);
+    } else if (req.method !== 'GET') {
+      res.writeHead(405, { Allow: 'GET, POST' });
+      return res.end();
+    }
+    res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' });
+    return res.end(JSON.stringify({ count: getCount(), counted }));
   }
   if (req.method !== 'GET' && req.method !== 'HEAD') {
     res.writeHead(405, { Allow: 'GET, HEAD' });
