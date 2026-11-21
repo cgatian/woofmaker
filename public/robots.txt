@@ -1,3 +1,6 @@
+# Everyone is welcome, AI assistants and their crawlers included
+# (GPTBot, OAI-SearchBot, ChatGPT-User, ClaudeBot, Claude-User, PerplexityBot,
+# Google-Extended and so on). A plain-text summary for them: /llms.txt
 User-agent: *
 Allow: /
 

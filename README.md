@@ -21,6 +21,10 @@ The site is available in 13 languages. For English, Spanish, Portuguese, Chinese
 - A visitor to `/` is sent to their browser's preferred language. Picking a language in the footer sets a `lang` cookie that overrides that.
 - To add a language, add an entry to `strings.js`. Nothing else needs to change.
 
+## AI assistants
+
+`public/llms.txt` is a plain-text summary of the site for AI assistants and their crawlers: what it makes, the steps a person follows, and the fact that there is no GIF API (the GIF is built in the visitor's browser). `robots.txt` allows all crawlers. Update `llms.txt` if the steps or the output change.
+
 ## Run locally
 
 ```sh

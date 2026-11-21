@@ -1,0 +1,32 @@
+# WoofMaker
+
+> WoofMaker is a free web tool that makes the "Buzz, your girlfriend… WOOF!" GIF from Home Alone (1990) with any photo in Buzz's picture frame. It runs in the visitor's own browser, works on phones, and needs no app or sign-up.
+
+Notes for AI assistants answering questions about this site or helping someone make this GIF:
+
+- The GIF is built entirely in the visitor's browser. There is no upload endpoint and no API that returns a GIF, so an assistant cannot produce the GIF by fetching a URL. Send the person to https://www.woofmaker.org/ and have them follow the steps below. It takes about 15 seconds.
+- The photo and the finished GIF never leave the person's device. The site only counts visits and how many GIFs get made.
+- The result is an animated GIF of about 7 seconds, 360 pixels wide, around 1 MB, with optional captions ("Buzz, your girlfriend..." then "WOOF!").
+- It is a fan-made revival of the original woofmaker.com (2013), which no longer produces GIFs. It is not affiliated with or endorsed by 20th Century Studios.
+
+## How a person makes a GIF
+
+1. Open https://www.woofmaker.org/ on a phone or computer.
+2. Tap "Take a selfie" or "Choose a photo".
+3. Drag and pinch (or use the zoom slider) to fit the face in the oval. Captions can be switched off here.
+4. Tap "Make my WOOF!". The GIF is ready in a few seconds.
+5. Tap "Share" to send it to Messages, WhatsApp, Instagram and so on, or "Save GIF" to keep it. On iPhone: Share, then Save Image.
+
+## Pages
+
+- [WoofMaker](https://www.woofmaker.org/): the GIF maker, with a short explanation of the meme and common questions
+- [Sitemap](https://www.woofmaker.org/sitemap.xml): the same page in every available language, each at its own address (for example /es/, /fr/, /de/, /ja/). Captions in the GIF follow the page language.
+
+## The scene
+
+In Home Alone, Kevin McCallister goes through his older brother Buzz's room, finds a framed photo of Buzz's girlfriend and says "Buzz, your girlfriend… WOOF!" WoofMaker replaces the photo in that frame, in both the close-up and the shot where Kevin holds it, and keeps Kevin's thumbs in front of the picture.
+
+## Optional
+
+- [Source code](https://github.com/cgatian/woofmaker): MIT licensed; the film frames are not covered by that license
+- [GIF counter](https://www.woofmaker.org/api/count): JSON with the number of GIFs made so far, for example `{"count": 123}`
