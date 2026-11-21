@@ -1,21 +1,12 @@
-// Encodes rendered frames into a looping GIF off the main thread, and keeps the
-// file under MAX_BYTES so it shares quickly everywhere.
+// Encodes rendered frames into a looping GIF off the main thread, in one pass.
 import { GIFEncoder, quantize, applyPalette } from '/vendor/gifenc.esm.js';
 
-const MAX_BYTES = 1_000_000;   // hard cap: under 1 MB
-
-// Tried in order until the GIF fits. The first one fits for almost every photo;
-// the rest trade a little size/colour for a guaranteed small file.
-//   width: GIF width in px   colors: palette size (power of 2)
-//   keep:  a pixel that changed by less than this per channel is left as-is
-const LADDER = [
-  { width: 360, colors: 128, keep: 12 },
-  { width: 360, colors: 128, keep: 18 },
-  { width: 320, colors: 128, keep: 14 },
-  { width: 320, colors: 64, keep: 16 },
-  { width: 280, colors: 64, keep: 18 },
-  { width: 240, colors: 64, keep: 20 },
-];
+const GIF_WIDTH = 360;   // px; the scene is rendered larger and scaled down
+const COLORS = 128;      // palette size per frame (power of 2)
+// A pixel that changed by less than this per channel since what's already on
+// screen is left as-is. Most of each frame is still, so this keeps the file
+// small (a typical GIF is a little over 1 MB).
+const KEEP = 12;
 
 // 4x4 ordered (Bayer) dither: a fixed, gentle pattern that breaks up colour
 // banding in gradients without the frame-to-frame shimmer of error diffusion.
@@ -82,26 +73,26 @@ function dither(rgba, width) {
   return out;
 }
 
-function encode(frames, sw, sh, { width, colors, keep }, onProgress) {
-  const w = Math.min(width, sw), h = Math.round(w * sh / sw), n = w * h;
+function encode(frames, sw, sh, onProgress) {
+  const w = Math.min(GIF_WIDTH, sw), h = Math.round(w * sh / sw), n = w * h;
   const resize = makeResizer(sw, sh, w, h);
-  const transparent = colors - 1;               // palette slot meaning "unchanged"
+  const transparent = COLORS - 1;               // palette slot meaning "unchanged"
   const gif = GIFEncoder();
   const shown = new Uint8ClampedArray(n * 3);   // what the viewer currently sees
   frames.forEach((f, k) => {
     const rgba = resize(new Uint8ClampedArray(f.buffer));
-    const palette = quantize(rgba, colors - 1);
+    const palette = quantize(rgba, COLORS - 1);
     const index = applyPalette(dither(rgba, w), palette);
-    while (palette.length < colors) palette.push([0, 0, 0]);
+    while (palette.length < COLORS) palette.push([0, 0, 0]);
     // Pixels that barely changed since the last frame stay transparent, so the
     // previous frame shows through. Most of each frame is still, so this is
     // where nearly all the file-size saving comes from.
     for (let p = 0; p < n; p++) {
       const c = palette[index[p]], i = p * 4, s = p * 3;
       if (k > 0 &&
-          Math.abs(rgba[i] - shown[s]) < keep &&
-          Math.abs(rgba[i + 1] - shown[s + 1]) < keep &&
-          Math.abs(rgba[i + 2] - shown[s + 2]) < keep) {
+          Math.abs(rgba[i] - shown[s]) < KEEP &&
+          Math.abs(rgba[i + 1] - shown[s + 1]) < KEEP &&
+          Math.abs(rgba[i + 2] - shown[s + 2]) < KEEP) {
         index[p] = transparent;
       } else {
         shown[s] = c[0]; shown[s + 1] = c[1]; shown[s + 2] = c[2];
@@ -118,10 +109,6 @@ function encode(frames, sw, sh, { width, colors, keep }, onProgress) {
 
 self.onmessage = ({ data }) => {
   const { frames, width, height } = data;
-  let result;
-  for (let a = 0; a < LADDER.length; a++) {
-    result = encode(frames, width, height, LADDER[a], progress => self.postMessage({ progress, attempt: a }));
-    if (result.bytes.length <= MAX_BYTES) break;
-  }
+  const result = encode(frames, width, height, progress => self.postMessage({ progress }));
   self.postMessage({ done: true, ...result }, [result.bytes.buffer]);
 };

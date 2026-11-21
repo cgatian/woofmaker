@@ -265,7 +265,7 @@ $('#make').addEventListener('click', async () => {
 
   const worker = new Worker('/js/gif-worker.js', { type: 'module' });
   worker.onmessage = ({ data }) => {
-    if (data.progress != null) setProgress(0.3 + data.progress * 0.7, data.attempt ? 'Making it smaller to share…' : 'Wrapping your GIF…');
+    if (data.progress != null) setProgress(0.3 + data.progress * 0.7, 'Wrapping your GIF…');
     if (data.done) {
       worker.terminate();
       state.gifBlob = new Blob([data.bytes], { type: 'image/gif' });

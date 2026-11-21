@@ -21,7 +21,7 @@ import numpy as np
 START = "00:22:54.00"      # Kevin looks over and picks up the frame
 DURATION = 7.3             # seconds to pull from the movie
 END_AFTER_WOOF = 23 * 60 + 0.9   # stop just after Kevin says "Woof!"
-STEP = 3                   # keep every 3rd frame -> ~8 fps GIF (keeps the file small)
+STEP = 2                   # keep every 2nd frame -> ~12 fps GIF
 OUT_W = 480                # scene width in px (the GIF itself is scaled to 360)
 GAMMA = 0.85               # <1 brightens the (fairly dark) film frames
 SHARPEN = 0.6              # unsharp-mask strength applied after downscaling
