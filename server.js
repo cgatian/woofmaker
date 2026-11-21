@@ -91,6 +91,18 @@ async function renderPage(slug) {
   return entry;
 }
 
+// Built from the language list, so every language is always in the sitemap.
+function sitemap() {
+  const today = new Date().toISOString().slice(0, 10);
+  const alternates = [
+    ...Object.entries(LANGS).map(([s, l]) => `    <xhtml:link rel="alternate" hreflang="${l.hreflang}" href="${SITE}${pathFor(s)}"/>`),
+    `    <xhtml:link rel="alternate" hreflang="x-default" href="${SITE}/"/>`,
+  ].join('\n');
+  const urls = Object.keys(LANGS)
+    .map(s => `  <url>\n    <loc>${SITE}${pathFor(s)}</loc>\n    <lastmod>${today}</lastmod>\n${alternates}\n  </url>`).join('\n');
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${urls}\n</urlset>\n`;
+}
+
 // The language a visitor to / should get: their own earlier choice (a cookie
 // set by the language picker) first, otherwise their browser's preference.
 function preferredLanguage(req) {
@@ -170,6 +182,10 @@ const server = createServer(async (req, res) => {
     if (slug) {
       ext = '.html';
       entry = await renderPage(slug);
+    } else if (url.pathname === '/sitemap.xml') {
+      ext = '.xml';
+      const body = Buffer.from(sitemap());
+      entry = { body, gz: gzipSync(body), mtime: new Date().toUTCString() };
     } else {
       file = await resolveFile(url.pathname);
       if (!file || !(await stat(file)).isFile()) throw Object.assign(new Error('nf'), { code: 'ENOENT' });

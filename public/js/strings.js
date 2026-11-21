@@ -1,12 +1,14 @@
 // Every piece of text on the site, per language. Used by the server (to render
 // each language's page) and by the browser (status messages and GIF captions).
 //
-// cap1 / cap2 are the GIF captions. They come from the film's own subtitle
-// tracks; where a track has no second line (cap2: null), cap1 stays on screen
-// for the whole line.
+// cap1 / cap2 are the GIF captions. For the first six languages they come from
+// the film's own subtitle tracks; where a track has no second line (cap2:
+// null), cap1 stays on screen for the whole line. The later languages are
+// translated by hand (see the note further down).
 //
 // To add a language: add an entry here with every key from `en`, and it gets
-// its own address (/<slug>/), hreflang tags and a place in the language picker.
+// its own address (/<slug>/), hreflang tags, a sitemap entry and a place in
+// the language picker.
 
 const en = {
   title: 'WoofMaker: Buzz, Your Girlfriend… WOOF! GIF Maker (Home Alone)',
@@ -385,6 +387,454 @@ const ko = {
   cap1: '버즈 여자 친구구나,', cap2: '웩!',
 };
 
+// ---------------------------------------------------------------------------
+// The languages below are translated by hand, captions included: the disc has
+// no subtitle line for them, so cap1/cap2 are our own wording, with each
+// language's own dog bark as the punchline.
+// ---------------------------------------------------------------------------
+
+// French. The film is "Maman, j'ai raté l'avion".   is the non-breaking
+// space French puts before ! ? : and inside « ».
+const fr = {
+  title: "WoofMaker : crée ton GIF « Buzz, ta copine… OUAF ! » (Maman, j'ai raté l'avion)",
+  description: "Mets qui tu veux dans le cadre photo de Buzz de Maman, j'ai raté l'avion (Home Alone). Crée gratuitement ton GIF « Buzz, ta copine… OUAF ! » en quelques secondes, directement sur ton téléphone. Sans appli, sans inscription, et ta photo ne quitte pas ton appareil.",
+  ogTitle: "Buzz, ta copine… OUAF ! Crée le tien.",
+  ogDescription: "Mets qui tu veux dans le cadre photo de Buzz de Maman, j'ai raté l'avion. Créateur de GIF gratuit qui marche sur ton téléphone.",
+  twDescription: "Mets qui tu veux dans le cadre photo de Buzz. Créateur de GIF gratuit pour ton téléphone.",
+  ogImageAlt: "La photo encadrée de la copine de Buzz dans Maman, j'ai raté l'avion, avec la légende : Buzz, ta copine… OUAF !",
+  appDescription: "Crée ton propre GIF « Buzz, ta copine… OUAF ! » de Maman, j'ai raté l'avion en mettant n'importe quelle photo dans le cadre de Buzz.",
+  faqMemeQ: "C'est quoi, le mème « Buzz, ta copine… OUAF ! » ?",
+  faqMemeA: "Dans Maman, j'ai raté l'avion (Home Alone, 1990), Kevin fouille la chambre de son frère Buzz, trouve une photo encadrée de sa copine et lâche « Buzz, your girlfriend… Woof ! ». WoofMaker met la photo de ton choix dans ce cadre et transforme la scène en GIF.",
+
+  tagline: "Mets qui tu veux dans le cadre.<br>Buzz, ta copine… <b>OUAF !</b>",
+  demoAria: "Exemple : la scène de Maman, j'ai raté l'avion avec un visage d'exemple dans le cadre",
+  loading: "Chargement de la scène…",
+  step1: "Choisis une photo", step2: "Cadre le visage", step3: "Partage ton WOOF",
+  selfie: "Prendre un selfie", choose: "Choisir une photo",
+  privacy: "Ta photo ne quitte jamais ton téléphone.",
+
+  back: "Retour", lineUp: "Cadre le visage",
+  editorAria: "Fais glisser pour déplacer la photo, pince pour zoomer",
+  zoom: "Zoom", livePreview: "Aperçu", captions: "Sous-titres",
+  hint: "Glisse pour déplacer · pince pour zoomer · place le visage dans l'ovale",
+  make: "Créer mon WOOF !",
+
+  adjust: "Ajuster la photo", yourWoof: "Ton WOOF", resultAlt: "Ton GIF WOOF", progress: "Progression",
+  sendIt: "Maintenant, envoie-le à ton Buzz.",
+  share: "Partager", save: "Enregistrer le GIF", again: "En créer un autre",
+  iosTip: "Astuce iPhone : touche Partager, puis <b>Enregistrer l'image</b> pour le garder dans Photos.",
+
+  aboutTitle: "Crée un GIF « Buzz, ta copine… OUAF ! »",
+  aboutBody: "C'est la meilleure réplique de <i>Maman, j'ai raté l'avion</i> : Kevin fouille la chambre de Buzz, tombe sur la photo encadrée de sa copine et rend son verdict. WoofMaker met <em>n'importe qui</em> dans ce cadre : ton pote, ta sœur, ton chef, ton chien.",
+  howTitle: "Comment ça marche",
+  how1: "Prends un selfie ou choisis une photo sur ton téléphone.",
+  how2: "Fais glisser et pince pour placer le visage dans le cadre.",
+  how3: "Touche <b>Créer mon WOOF !</b>, puis partage le GIF sur Messages, WhatsApp, Instagram ou ailleurs.",
+  questions: "Questions",
+  q1: "C'est gratuit ?", a1: "Oui. C'est gratuit, sans appli et sans inscription.",
+  q2: "Ma photo est-elle envoyée quelque part ?",
+  a2: "Non. Le GIF est créé dans ton navigateur et ta photo ne quitte jamais ton appareil. Le site utilise Google Analytics pour compter les visites et le nombre de GIF créés ; il ne reçoit jamais ta photo ni ton GIF.",
+  q3: "Comment l'enregistrer sur iPhone ?",
+  a3: "Touche <b>Partager</b>, puis <b>Enregistrer l'image</b>. Sur Android, touche Partager ou Enregistrer le GIF.",
+  q4: "Qu'est devenu le woofmaker.com d'origine ?",
+  a4: "L'original de 2013 a cessé de créer des GIF quand son serveur a disparu. Cette version faite par des fans relance la tradition des fêtes, repensée pour les téléphones.",
+
+  tribute: "Un hommage de fans au woofmaker.com d'origine.",
+  legal: "Home Alone © 20th Century Studios. Site non affilié et non approuvé.",
+  openSource: "Open source :",
+  woofsCreated: "Woofs créés", countAria: "{n} Woofs créés",
+  language: "Langue",
+
+  statusScene: "Préparation de la scène…", statusWrap: "Emballage de ton GIF…",
+  statusReady: "WOOF ! Prêt à partager.",
+  statusError: "Un problème est survenu pendant la création du GIF. Réessayer ?",
+  toastScene: "Impossible de charger la scène. Vérifie ta connexion et recharge la page.",
+  toastPhoto: "Cette photo ne s'ouvre pas. Essaies-en une autre.",
+  toastShare: "Le partage a échoué. Utilise Enregistrer.",
+  unsupported: "Ton navigateur n'est pas encore pris en charge.",
+  face: ["TON", "VISAGE", "ICI"],
+  shareText: "Buzz, ta copine… OUAF ! 🐶",
+  cap1: "Buzz, ta copine...", cap2: "OUAF !",
+};
+
+// German. The film is "Kevin – Allein zu Haus".
+const de = {
+  title: "WoofMaker: Mach dein „Buzz, deine Freundin … WUFF!“-GIF (Kevin – Allein zu Haus)",
+  description: "Setz jeden in Buzz' Bilderrahmen aus Kevin – Allein zu Haus (Home Alone). Erstelle dein eigenes „Buzz, deine Freundin … WUFF!“-GIF kostenlos in Sekunden, direkt auf dem Handy. Keine App, keine Anmeldung, und dein Foto bleibt auf deinem Gerät.",
+  ogTitle: "Buzz, deine Freundin … WUFF! Mach dein eigenes.",
+  ogDescription: "Setz jeden in Buzz' Bilderrahmen aus Kevin – Allein zu Haus. Kostenloser GIF-Maker, der direkt auf dem Handy läuft.",
+  twDescription: "Setz jeden in Buzz' Bilderrahmen. Kostenloser GIF-Maker fürs Handy.",
+  ogImageAlt: "Das gerahmte Foto von Buzz' Freundin aus Kevin – Allein zu Haus mit dem Untertitel: Buzz, deine Freundin … WUFF!",
+  appDescription: "Erstelle dein eigenes „Buzz, deine Freundin … WUFF!“-GIF aus Kevin – Allein zu Haus, indem du ein beliebiges Foto in Buzz' Bilderrahmen setzt.",
+  faqMemeQ: "Was ist das „Buzz, deine Freundin … WUFF!“-Meme?",
+  faqMemeA: "In Kevin – Allein zu Haus (Home Alone, 1990) durchstöbert Kevin das Zimmer seines Bruders Buzz, findet ein gerahmtes Foto von Buzz' Freundin und sagt: „Buzz, your girlfriend… Woof!“ WoofMaker setzt ein Foto deiner Wahl in diesen Rahmen und macht aus der Szene ein GIF.",
+
+  tagline: "Setz jeden in den Bilderrahmen.<br>Buzz, deine Freundin … <b>WUFF!</b>",
+  demoAria: "Beispiel: die Szene aus Kevin – Allein zu Haus mit einem Platzhaltergesicht im Bilderrahmen",
+  loading: "Szene wird geladen …",
+  step1: "Foto auswählen", step2: "Gesicht ausrichten", step3: "WOOF teilen",
+  selfie: "Selfie aufnehmen", choose: "Foto auswählen",
+  privacy: "Dein Foto verlässt nie dein Handy.",
+
+  back: "Zurück", lineUp: "Gesicht ausrichten",
+  editorAria: "Ziehen, um das Foto zu verschieben, mit zwei Fingern zoomen",
+  zoom: "Zoom", livePreview: "Live-Vorschau", captions: "Untertitel",
+  hint: "Ziehen zum Verschieben · mit zwei Fingern zoomen · Gesicht ins Oval setzen",
+  make: "Mein WOOF erstellen!",
+
+  adjust: "Foto anpassen", yourWoof: "Dein WOOF", resultAlt: "Dein WOOF-GIF", progress: "Fortschritt",
+  sendIt: "Jetzt schick es deinem Buzz.",
+  share: "Teilen", save: "GIF speichern", again: "Noch eins erstellen",
+  iosTip: "iPhone-Tipp: Tippe auf Teilen und dann auf <b>Bild sichern</b>, um es in Fotos zu speichern.",
+
+  aboutTitle: "Erstelle ein „Buzz, deine Freundin … WUFF!“-GIF",
+  aboutBody: "Es ist der beste Spruch aus <i>Kevin – Allein zu Haus</i>: Kevin durchstöbert Buzz' Zimmer, findet das gerahmte Foto seiner Freundin und fällt sein Urteil. WoofMaker setzt <em>jeden</em> in diesen Bilderrahmen: deinen Kumpel, deine Schwester, deinen Chef, deinen Hund.",
+  howTitle: "So funktioniert's",
+  how1: "Mach ein Selfie oder wähle ein Foto von deinem Handy.",
+  how2: "Ziehe und zoome mit zwei Fingern, bis das Gesicht im Rahmen sitzt.",
+  how3: "Tippe auf <b>Mein WOOF erstellen!</b> und teile das GIF dann per Nachrichten, WhatsApp, Instagram oder wo du willst.",
+  questions: "Fragen",
+  q1: "Ist es kostenlos?", a1: "Ja. Es ist kostenlos, ohne App und ohne Anmeldung.",
+  q2: "Wird mein Foto irgendwo hochgeladen?",
+  a2: "Nein. Das GIF entsteht direkt in deinem Browser, und dein Foto verlässt nie dein Gerät. Die Seite nutzt Google Analytics, um Besuche und die Zahl der erstellten GIFs zu zählen; dein Foto oder dein GIF erhält sie nie.",
+  q3: "Wie speichere ich es auf dem iPhone?",
+  a3: "Tippe auf <b>Teilen</b> und dann auf <b>Bild sichern</b>. Auf Android tippst du auf Teilen oder GIF speichern.",
+  q4: "Was ist aus dem ursprünglichen woofmaker.com geworden?",
+  a4: "Das Original von 2013 konnte keine GIFs mehr erstellen, als sein Server verschwand. Diese Fan-Version bringt die Weihnachtstradition zurück, neu gebaut fürs Handy.",
+
+  tribute: "Eine Fan-Hommage an das ursprüngliche woofmaker.com.",
+  legal: "Home Alone © 20th Century Studios. Keine Verbindung, keine Billigung.",
+  openSource: "Open Source:",
+  woofsCreated: "Woofs erstellt", countAria: "{n} Woofs erstellt",
+  language: "Sprache",
+
+  statusScene: "Szene wird vorbereitet …", statusWrap: "Dein GIF wird verpackt …",
+  statusReady: "WOOF! Bereit zum Teilen.",
+  statusError: "Beim Erstellen des GIFs ist etwas schiefgelaufen. Noch mal versuchen?",
+  toastScene: "Die Szene konnte nicht geladen werden. Prüfe deine Verbindung und lade die Seite neu.",
+  toastPhoto: "Das Foto ließ sich nicht öffnen. Probier ein anderes.",
+  toastShare: "Teilen fehlgeschlagen. Nutze stattdessen Speichern.",
+  unsupported: "Dein Browser wird derzeit nicht unterstützt.",
+  face: ["DEIN", "GESICHT", "HIER"],
+  shareText: "Buzz, deine Freundin … WUFF! 🐶",
+  cap1: "Buzz, deine Freundin...", cap2: "WUFF!",
+};
+
+// Italian. The film is "Mamma, ho perso l'aereo".
+const it = {
+  title: "WoofMaker: crea la tua GIF «Buzz, la tua ragazza… BAU!» (Mamma, ho perso l'aereo)",
+  description: "Metti chi vuoi nella cornice di Buzz di Mamma, ho perso l'aereo (Home Alone). Crea gratis la tua GIF «Buzz, la tua ragazza… BAU!» in pochi secondi, direttamente dal telefono. Niente app, niente registrazione, e la tua foto resta sul tuo dispositivo.",
+  ogTitle: "Buzz, la tua ragazza… BAU! Crea la tua.",
+  ogDescription: "Metti chi vuoi nella cornice di Buzz di Mamma, ho perso l'aereo. Creatore di GIF gratuito che funziona sul telefono.",
+  twDescription: "Metti chi vuoi nella cornice di Buzz. Creatore di GIF gratuito per il telefono.",
+  ogImageAlt: "La foto incorniciata della ragazza di Buzz in Mamma, ho perso l'aereo, con la scritta: Buzz, la tua ragazza… BAU!",
+  appDescription: "Crea la tua GIF «Buzz, la tua ragazza… BAU!» di Mamma, ho perso l'aereo mettendo una foto qualsiasi nella cornice di Buzz.",
+  faqMemeQ: "Cos'è il meme «Buzz, la tua ragazza… BAU!»?",
+  faqMemeA: "In Mamma, ho perso l'aereo (Home Alone, 1990), Kevin fruga nella stanza del fratello Buzz, trova una foto incorniciata della sua ragazza e dice «Buzz, your girlfriend… Woof!». WoofMaker mette la foto che scegli in quella cornice e trasforma la scena in una GIF.",
+
+  tagline: "Metti chi vuoi nella cornice.<br>Buzz, la tua ragazza… <b>BAU!</b>",
+  demoAria: "Esempio: la scena di Mamma, ho perso l'aereo con un volto di esempio nella cornice",
+  loading: "Caricamento della scena…",
+  step1: "Scegli una foto", step2: "Allinea il viso", step3: "Condividi il tuo WOOF",
+  selfie: "Scatta un selfie", choose: "Scegli una foto",
+  privacy: "La tua foto non lascia mai il telefono.",
+
+  back: "Indietro", lineUp: "Allinea il viso",
+  editorAria: "Trascina per spostare la foto, pizzica per ingrandire",
+  zoom: "Zoom", livePreview: "Anteprima", captions: "Sottotitoli",
+  hint: "Trascina per spostare · pizzica per ingrandire · metti il viso nell'ovale",
+  make: "Crea il mio WOOF!",
+
+  adjust: "Regola la foto", yourWoof: "Il tuo WOOF", resultAlt: "La tua GIF WOOF", progress: "Avanzamento",
+  sendIt: "Ora mandala al tuo Buzz.",
+  share: "Condividi", save: "Salva GIF", again: "Creane un'altra",
+  iosTip: "Suggerimento per iPhone: tocca Condividi, poi <b>Salva immagine</b> per tenerla in Foto.",
+
+  aboutTitle: "Crea una GIF «Buzz, la tua ragazza… BAU!»",
+  aboutBody: "È la battuta migliore di <i>Mamma, ho perso l'aereo</i>: Kevin fruga nella stanza di Buzz, trova la foto incorniciata della sua ragazza e dà il suo verdetto. WoofMaker mette <em>chiunque</em> in quella cornice: il tuo amico, tua sorella, il tuo capo, il tuo cane.",
+  howTitle: "Come funziona",
+  how1: "Scatta un selfie o scegli una foto dal telefono.",
+  how2: "Trascina e pizzica per sistemare il viso nella cornice.",
+  how3: "Tocca <b>Crea il mio WOOF!</b>, poi condividi la GIF su Messaggi, WhatsApp, Instagram o dove vuoi.",
+  questions: "Domande",
+  q1: "È gratis?", a1: "Sì. È gratis, senza app e senza registrazione.",
+  q2: "La mia foto viene caricata da qualche parte?",
+  a2: "No. La GIF viene creata nel tuo browser e la tua foto non lascia mai il dispositivo. Il sito usa Google Analytics per contare le visite e quante GIF vengono create; non riceve mai la tua foto né la tua GIF.",
+  q3: "Come la salvo su iPhone?",
+  a3: "Tocca <b>Condividi</b>, poi <b>Salva immagine</b>. Su Android, tocca Condividi o Salva GIF.",
+  q4: "Che fine ha fatto il woofmaker.com originale?",
+  a4: "L'originale del 2013 ha smesso di creare GIF quando il suo server è sparito. Questa versione fatta dai fan riporta in vita la tradizione natalizia, rifatta per i telefoni.",
+
+  tribute: "Un omaggio dei fan al woofmaker.com originale.",
+  legal: "Home Alone © 20th Century Studios. Nessuna affiliazione né approvazione.",
+  openSource: "Open source:",
+  woofsCreated: "Woof creati", countAria: "{n} Woof creati",
+  language: "Lingua",
+
+  statusScene: "Preparo la scena…", statusWrap: "Impacchetto la tua GIF…",
+  statusReady: "WOOF! Pronta da condividere.",
+  statusError: "Qualcosa è andato storto nel creare la GIF. Riprovare?",
+  toastScene: "Impossibile caricare la scena. Controlla la connessione e ricarica la pagina.",
+  toastPhoto: "Quella foto non si apre. Provane un'altra.",
+  toastShare: "Condivisione non riuscita. Usa Salva.",
+  unsupported: "Il tuo browser non è ancora supportato.",
+  face: ["LA TUA", "FACCIA", "QUI"],
+  shareText: "Buzz, la tua ragazza… BAU! 🐶",
+  cap1: "Buzz, la tua ragazza...", cap2: "BAU!",
+};
+
+// Dutch. The film keeps its English title, "Home Alone".
+const nl = {
+  title: "WoofMaker: maak je eigen ‘Buzz, je vriendin… WOEF!’-GIF (Home Alone)",
+  description: "Zet wie je maar wilt in de fotolijst van Buzz uit Home Alone. Maak gratis in een paar seconden je eigen ‘Buzz, je vriendin… WOEF!’-GIF, gewoon op je telefoon. Geen app, geen account, en je foto blijft op je toestel.",
+  ogTitle: "Buzz, je vriendin… WOEF! Maak die van jou.",
+  ogDescription: "Zet wie je maar wilt in de fotolijst van Buzz uit Home Alone. Gratis GIF-maker die gewoon op je telefoon werkt.",
+  twDescription: "Zet wie je maar wilt in de fotolijst van Buzz. Gratis GIF-maker voor je telefoon.",
+  ogImageAlt: "De ingelijste foto van de vriendin van Buzz uit Home Alone, met het onderschrift: Buzz, je vriendin… WOEF!",
+  appDescription: "Maak je eigen ‘Buzz, je vriendin… WOEF!’-GIF uit Home Alone door een foto naar keuze in de fotolijst van Buzz te zetten.",
+  faqMemeQ: "Wat is de ‘Buzz, je vriendin… WOEF!’-meme?",
+  faqMemeA: "In Home Alone (1990) snuffelt Kevin in de kamer van zijn broer Buzz, vindt een ingelijste foto van Buzz' vriendin en zegt: ‘Buzz, your girlfriend… Woof!’ WoofMaker zet een foto naar keuze in die fotolijst en maakt van de scène een GIF.",
+
+  tagline: "Zet wie je maar wilt in de fotolijst.<br>Buzz, je vriendin… <b>WOEF!</b>",
+  demoAria: "Voorbeeld: de scène uit Home Alone met een voorbeeldgezicht in de fotolijst",
+  loading: "Scène laden…",
+  step1: "Kies een foto", step2: "Lijn het gezicht uit", step3: "Deel je WOOF",
+  selfie: "Selfie maken", choose: "Foto kiezen",
+  privacy: "Je foto verlaat je telefoon nooit.",
+
+  back: "Terug", lineUp: "Lijn het gezicht uit",
+  editorAria: "Sleep om de foto te verplaatsen, knijp om te zoomen",
+  zoom: "Zoom", livePreview: "Voorbeeld", captions: "Ondertitels",
+  hint: "Sleep om te verplaatsen · knijp om te zoomen · zet het gezicht in de ovaal",
+  make: "Maak mijn WOOF!",
+
+  adjust: "Foto aanpassen", yourWoof: "Jouw WOOF", resultAlt: "Jouw WOOF-GIF", progress: "Voortgang",
+  sendIt: "Stuur hem nu naar jouw Buzz.",
+  share: "Delen", save: "GIF opslaan", again: "Nog een maken",
+  iosTip: "iPhone-tip: tik op Deel en dan op <b>Bewaar afbeelding</b> om hem in Foto's te zetten.",
+
+  aboutTitle: "Maak een ‘Buzz, je vriendin… WOEF!’-GIF",
+  aboutBody: "Het is de beste zin uit <i>Home Alone</i>: Kevin snuffelt in de kamer van Buzz, vindt de ingelijste foto van zijn vriendin en velt zijn oordeel. WoofMaker zet <em>iedereen</em> in die fotolijst: je vriend, je zus, je baas, je hond.",
+  howTitle: "Zo werkt het",
+  how1: "Maak een selfie of kies een foto op je telefoon.",
+  how2: "Sleep en knijp tot het gezicht in de lijst past.",
+  how3: "Tik op <b>Maak mijn WOOF!</b> en deel de GIF via Berichten, WhatsApp, Instagram of waar je maar wilt.",
+  questions: "Vragen",
+  q1: "Is het gratis?", a1: "Ja. Het is gratis, zonder app en zonder account.",
+  q2: "Wordt mijn foto ergens geüpload?",
+  a2: "Nee. De GIF wordt in je browser gemaakt en je foto verlaat je toestel nooit. De site gebruikt Google Analytics om bezoeken en het aantal gemaakte GIF's te tellen; je foto of je GIF krijgt de site nooit.",
+  q3: "Hoe bewaar ik hem op mijn iPhone?",
+  a3: "Tik op <b>Deel</b> en dan op <b>Bewaar afbeelding</b>. Op Android tik je op Delen of GIF opslaan.",
+  q4: "Wat is er met het originele woofmaker.com gebeurd?",
+  a4: "Het origineel uit 2013 kon geen GIF's meer maken toen de server verdween. Deze versie van fans brengt de feestdagentraditie terug, opnieuw gebouwd voor telefoons.",
+
+  tribute: "Een eerbetoon van fans aan het originele woofmaker.com.",
+  legal: "Home Alone © 20th Century Studios. Niet gelieerd of goedgekeurd.",
+  openSource: "Open source:",
+  woofsCreated: "Woofs gemaakt", countAria: "{n} Woofs gemaakt",
+  language: "Taal",
+
+  statusScene: "Scène klaarzetten…", statusWrap: "Je GIF inpakken…",
+  statusReady: "WOOF! Klaar om te delen.",
+  statusError: "Er ging iets mis bij het maken van de GIF. Opnieuw proberen?",
+  toastScene: "De scène kon niet worden geladen. Controleer je verbinding en vernieuw de pagina.",
+  toastPhoto: "Die foto ging niet open. Probeer een andere.",
+  toastShare: "Delen is mislukt. Gebruik Opslaan.",
+  unsupported: "Je browser wordt nog niet ondersteund.",
+  face: ["JOUW", "GEZICHT", "HIER"],
+  shareText: "Buzz, je vriendin… WOEF! 🐶",
+  cap1: "Buzz, je vriendin...", cap2: "WOEF!",
+};
+
+// Japanese. The film is 『ホーム・アローン』.
+const ja = {
+  title: "WoofMaker：『ホーム・アローン』「バズの彼女…ワン！」GIFメーカー",
+  description: "『ホーム・アローン』のバズの写真立てに、好きな人を入れよう。「バズの彼女…ワン！」のGIFをスマホで数秒、無料で作れます。アプリも登録も不要で、写真が端末の外に出ることはありません。",
+  ogTitle: "バズの彼女…ワン！ 自分だけのGIFを作ろう。",
+  ogDescription: "『ホーム・アローン』のバズの写真立てに好きな人を入れよう。スマホでそのまま使える無料GIFメーカー。",
+  twDescription: "バズの写真立てに好きな人を入れよう。スマホ用の無料GIFメーカー。",
+  ogImageAlt: "『ホーム・アローン』に出てくるバズの彼女の写真立て。字幕は「バズの彼女…ワン！」",
+  appDescription: "バズの写真立てに好きな写真を入れて、『ホーム・アローン』の「バズの彼女…ワン！」GIFを作れます。",
+  faqMemeQ: "「バズの彼女…ワン！」のミームって何？",
+  faqMemeA: "『ホーム・アローン』（1990年）で、ケビンは兄バズの部屋をあさり、バズの彼女の写真立てを見つけて「Buzz, your girlfriend… Woof!」と言います。WoofMakerは、選んだ写真をその写真立てに入れて、このシーンをGIFにします。",
+
+  tagline: "写真立てに好きな人を入れよう。<br>バズの彼女… <b>ワン！</b>",
+  demoAria: "例：写真立てにサンプルの顔が入った『ホーム・アローン』のシーン",
+  loading: "シーンを読み込み中…",
+  step1: "写真を選ぶ", step2: "顔を合わせる", step3: "WOOFをシェア",
+  selfie: "自撮りする", choose: "写真を選ぶ",
+  privacy: "写真がスマホの外に出ることはありません。",
+
+  back: "戻る", lineUp: "顔を合わせる",
+  editorAria: "ドラッグで写真を移動、ピンチで拡大・縮小",
+  zoom: "ズーム", livePreview: "プレビュー", captions: "字幕",
+  hint: "ドラッグで移動 · ピンチでズーム · 顔を楕円に合わせる",
+  make: "WOOFを作る！",
+
+  adjust: "写真を調整", yourWoof: "あなたのWOOF", resultAlt: "あなたのWOOF GIF", progress: "進行状況",
+  sendIt: "さあ、あなたのバズに送ろう。",
+  share: "シェア", save: "GIFを保存", again: "もう1つ作る",
+  iosTip: "iPhoneのヒント：「共有」をタップして<b>「画像を保存」</b>を選ぶと「写真」に保存できます。",
+
+  aboutTitle: "「バズの彼女…ワン！」GIFを作ろう",
+  aboutBody: "<i>『ホーム・アローン』</i>屈指の名セリフ。ケビンがバズの部屋をあさり、彼女の写真立てを見つけて、ひと言で評価を下します。WoofMakerなら、その写真立てに<em>誰でも</em>入れられます。友だち、きょうだい、上司、愛犬まで。",
+  howTitle: "使い方",
+  how1: "自撮りするか、スマホの写真を選びます。",
+  how2: "ドラッグとピンチで、顔を写真立てに合わせます。",
+  how3: "<b>「WOOFを作る！」</b>をタップして、メッセージ、WhatsApp、InstagramなどでGIFをシェアします。",
+  questions: "よくある質問",
+  q1: "無料ですか？", a1: "はい。無料で、アプリも登録も不要です。",
+  q2: "写真はどこかにアップロードされますか？",
+  a2: "いいえ。GIFはブラウザの中で作られ、写真が端末の外に出ることはありません。このサイトは訪問数と作成されたGIFの数を数えるためにGoogle Analyticsを使っていますが、写真やGIFが送信されることはありません。",
+  q3: "iPhoneではどう保存しますか？",
+  a3: "<b>「共有」</b>をタップして、<b>「画像を保存」</b>を選びます。Androidでは「シェア」または「GIFを保存」をタップします。",
+  q4: "元のwoofmaker.comはどうなったの？",
+  a4: "2013年のオリジナルは、サーバーがなくなってGIFを作れなくなりました。このファンメイド版は、あの年末の恒例をスマホ向けに作り直して復活させたものです。",
+
+  tribute: "オリジナルのwoofmaker.comに捧げるファンメイドのトリビュートです。",
+  legal: "Home Alone © 20th Century Studios。提携・公認の関係はありません。",
+  openSource: "オープンソース：",
+  woofsCreated: "個のWoofを作成", countAria: "{n}個のWoofを作成",
+  language: "言語",
+
+  statusScene: "シーンを準備中…", statusWrap: "GIFを包装中…",
+  statusReady: "WOOF！シェアの準備ができました。",
+  statusError: "GIFの作成中に問題が発生しました。もう一度試しますか？",
+  toastScene: "シーンを読み込めませんでした。接続を確認して再読み込みしてください。",
+  toastPhoto: "その写真は開けませんでした。別の写真をお試しください。",
+  toastShare: "シェアできませんでした。「保存」をお使いください。",
+  unsupported: "お使いのブラウザにはまだ対応していません。",
+  face: ["ここに", "顔を", "入れよう"],
+  shareText: "バズの彼女…ワン！🐶",
+  cap1: "バズの彼女…", cap2: "ワン！",
+};
+
+// Russian. The film is «Один дома».
+const ru = {
+  title: "WoofMaker: сделай GIF «Базз, твоя девушка… ГАВ!» (Один дома)",
+  description: "Вставь кого угодно в фоторамку Базза из фильма «Один дома» (Home Alone). Сделай свой GIF «Базз, твоя девушка… ГАВ!» бесплатно за пару секунд прямо на телефоне. Без приложений и регистрации, а твоё фото не покидает устройство.",
+  ogTitle: "Базз, твоя девушка… ГАВ! Сделай свой.",
+  ogDescription: "Вставь кого угодно в фоторамку Базза из «Один дома». Бесплатный создатель GIF, который работает прямо на телефоне.",
+  twDescription: "Вставь кого угодно в фоторамку Базза. Бесплатный создатель GIF для телефона.",
+  ogImageAlt: "Фото девушки Базза в рамке из фильма «Один дома» с подписью: Базз, твоя девушка… ГАВ!",
+  appDescription: "Сделай свой GIF «Базз, твоя девушка… ГАВ!» из фильма «Один дома», вставив любое фото в рамку Базза.",
+  faqMemeQ: "Что за мем «Базз, твоя девушка… ГАВ!»?",
+  faqMemeA: "В фильме «Один дома» (Home Alone, 1990) Кевин роется в комнате своего брата Базза, находит фото его девушки в рамке и говорит: «Buzz, your girlfriend… Woof!» WoofMaker вставляет выбранное тобой фото в эту рамку и превращает сцену в GIF.",
+
+  tagline: "Вставь кого угодно в фоторамку.<br>Базз, твоя девушка… <b>ГАВ!</b>",
+  demoAria: "Пример: сцена из «Один дома» с образцом лица в фоторамке",
+  loading: "Загружаем сцену…",
+  step1: "Выбери фото", step2: "Подгони лицо", step3: "Поделись своим WOOF",
+  selfie: "Сделать селфи", choose: "Выбрать фото",
+  privacy: "Твоё фото не покидает телефон.",
+
+  back: "Назад", lineUp: "Подгони лицо",
+  editorAria: "Перетащи, чтобы подвинуть фото, своди и разводи пальцы, чтобы изменить масштаб",
+  zoom: "Масштаб", livePreview: "Предпросмотр", captions: "Субтитры",
+  hint: "Тяни, чтобы двигать · своди пальцы для масштаба · помести лицо в овал",
+  make: "Сделать мой WOOF!",
+
+  adjust: "Поправить фото", yourWoof: "Твой WOOF", resultAlt: "Твой GIF WOOF", progress: "Прогресс",
+  sendIt: "А теперь отправь его своему Баззу.",
+  share: "Поделиться", save: "Сохранить GIF", again: "Сделать ещё",
+  iosTip: "Совет для iPhone: нажми «Поделиться», затем <b>«Сохранить изображение»</b>, чтобы оставить его в «Фото».",
+
+  aboutTitle: "Сделай GIF «Базз, твоя девушка… ГАВ!»",
+  aboutBody: "Это лучшая реплика в фильме <i>«Один дома»</i>: Кевин роется в комнате Базза, находит фото его девушки в рамке и выносит вердикт. WoofMaker вставит в эту рамку <em>кого угодно</em>: друга, сестру, начальника, собаку.",
+  howTitle: "Как это работает",
+  how1: "Сделай селфи или выбери любое фото с телефона.",
+  how2: "Перетаскивай и своди пальцы, чтобы подогнать лицо под рамку.",
+  how3: "Нажми <b>«Сделать мой WOOF!»</b>, а потом поделись GIF в Сообщениях, WhatsApp, Instagram или где угодно.",
+  questions: "Вопросы",
+  q1: "Это бесплатно?", a1: "Да. Бесплатно, без приложений и без регистрации.",
+  q2: "Моё фото куда-нибудь загружается?",
+  a2: "Нет. GIF создаётся прямо в твоём браузере, и фото не покидает устройство. Сайт использует Google Analytics, чтобы считать посещения и количество созданных GIF; твоё фото и твой GIF он не получает.",
+  q3: "Как сохранить на iPhone?",
+  a3: "Нажми <b>«Поделиться»</b>, затем <b>«Сохранить изображение»</b>. На Android нажми «Поделиться» или «Сохранить GIF».",
+  q4: "Что случилось с оригинальным woofmaker.com?",
+  a4: "Оригинал 2013 года перестал создавать GIF, когда исчез его сервер. Эта фанатская версия возвращает новогоднюю традицию и переделана под телефоны.",
+
+  tribute: "Фанатский трибьют оригинальному woofmaker.com.",
+  legal: "Home Alone © 20th Century Studios. Сайт не связан с правообладателем и не одобрен им.",
+  openSource: "Открытый код:",
+  woofsCreated: "Woof создано", countAria: "Создано Woof: {n}",
+  language: "Язык",
+
+  statusScene: "Готовим сцену…", statusWrap: "Упаковываем твой GIF…",
+  statusReady: "WOOF! Можно делиться.",
+  statusError: "Не удалось создать GIF. Попробовать ещё раз?",
+  toastScene: "Не удалось загрузить сцену. Проверь соединение и обнови страницу.",
+  toastPhoto: "Это фото не открылось. Попробуй другое.",
+  toastShare: "Не получилось поделиться. Используй «Сохранить».",
+  unsupported: "Твой браузер пока не поддерживается.",
+  face: ["ТВОЁ", "ЛИЦО", "ЗДЕСЬ"],
+  shareText: "Базз, твоя девушка… ГАВ! 🐶",
+  cap1: "Базз, твоя девушка...", cap2: "ГАВ!",
+};
+
+// Polish. The film is "Kevin sam w domu".
+const pl = {
+  title: "WoofMaker: zrób GIF-a „Buzz, twoja dziewczyna… HAU!” (Kevin sam w domu)",
+  description: "Wstaw kogo chcesz do ramki Buzza z filmu Kevin sam w domu (Home Alone). Zrób za darmo własnego GIF-a „Buzz, twoja dziewczyna… HAU!” w kilka sekund, prosto z telefonu. Bez aplikacji, bez rejestracji, a twoje zdjęcie nie opuszcza urządzenia.",
+  ogTitle: "Buzz, twoja dziewczyna… HAU! Zrób swojego.",
+  ogDescription: "Wstaw kogo chcesz do ramki Buzza z filmu Kevin sam w domu. Darmowy kreator GIF-ów, który działa na telefonie.",
+  twDescription: "Wstaw kogo chcesz do ramki Buzza. Darmowy kreator GIF-ów na telefon.",
+  ogImageAlt: "Oprawione zdjęcie dziewczyny Buzza z filmu Kevin sam w domu z podpisem: Buzz, twoja dziewczyna… HAU!",
+  appDescription: "Zrób własnego GIF-a „Buzz, twoja dziewczyna… HAU!” z filmu Kevin sam w domu, wstawiając dowolne zdjęcie do ramki Buzza.",
+  faqMemeQ: "Co to za mem „Buzz, twoja dziewczyna… HAU!”?",
+  faqMemeA: "W filmie Kevin sam w domu (Home Alone, 1990) Kevin myszkuje w pokoju swojego brata Buzza, znajduje oprawione zdjęcie jego dziewczyny i mówi: „Buzz, your girlfriend… Woof!”. WoofMaker wstawia wybrane przez ciebie zdjęcie do tej ramki i zamienia scenę w GIF-a.",
+
+  tagline: "Wstaw kogo chcesz do ramki.<br>Buzz, twoja dziewczyna… <b>HAU!</b>",
+  demoAria: "Przykład: scena z filmu Kevin sam w domu z przykładową twarzą w ramce",
+  loading: "Ładowanie sceny…",
+  step1: "Wybierz zdjęcie", step2: "Dopasuj twarz", step3: "Udostępnij swój WOOF",
+  selfie: "Zrób selfie", choose: "Wybierz zdjęcie",
+  privacy: "Twoje zdjęcie nigdy nie opuszcza telefonu.",
+
+  back: "Wstecz", lineUp: "Dopasuj twarz",
+  editorAria: "Przeciągnij, aby przesunąć zdjęcie, rozsuń palce, aby powiększyć",
+  zoom: "Powiększenie", livePreview: "Podgląd", captions: "Napisy",
+  hint: "Przeciągaj, aby przesuwać · rozsuwaj palce, aby powiększać · umieść twarz w owalu",
+  make: "Zrób mój WOOF!",
+
+  adjust: "Popraw zdjęcie", yourWoof: "Twój WOOF", resultAlt: "Twój GIF WOOF", progress: "Postęp",
+  sendIt: "Teraz wyślij go swojemu Buzzowi.",
+  share: "Udostępnij", save: "Zapisz GIF", again: "Zrób kolejny",
+  iosTip: "Wskazówka dla iPhone'a: stuknij Udostępnij, a potem <b>Zachowaj obrazek</b>, żeby mieć go w Zdjęciach.",
+
+  aboutTitle: "Zrób GIF-a „Buzz, twoja dziewczyna… HAU!”",
+  aboutBody: "To najlepsza kwestia w filmie <i>Kevin sam w domu</i>: Kevin myszkuje w pokoju Buzza, znajduje oprawione zdjęcie jego dziewczyny i wydaje werdykt. WoofMaker wstawi do tej ramki <em>każdego</em>: kumpla, siostrę, szefa, psa.",
+  howTitle: "Jak to działa",
+  how1: "Zrób selfie albo wybierz dowolne zdjęcie z telefonu.",
+  how2: "Przeciągaj i rozsuwaj palce, żeby dopasować twarz do ramki.",
+  how3: "Stuknij <b>Zrób mój WOOF!</b>, a potem udostępnij GIF-a w Wiadomościach, na WhatsAppie, Instagramie albo gdzie chcesz.",
+  questions: "Pytania",
+  q1: "Czy to jest darmowe?", a1: "Tak. Za darmo, bez aplikacji i bez rejestracji.",
+  q2: "Czy moje zdjęcie jest gdzieś wysyłane?",
+  a2: "Nie. GIF powstaje w twojej przeglądarce, a zdjęcie nigdy nie opuszcza urządzenia. Strona używa Google Analytics do liczenia odwiedzin i liczby stworzonych GIF-ów; nigdy nie dostaje twojego zdjęcia ani GIF-a.",
+  q3: "Jak zapisać go na iPhonie?",
+  a3: "Stuknij <b>Udostępnij</b>, a potem <b>Zachowaj obrazek</b>. Na Androidzie stuknij Udostępnij albo Zapisz GIF.",
+  q4: "Co się stało z oryginalnym woofmaker.com?",
+  a4: "Oryginał z 2013 roku przestał tworzyć GIF-y, gdy zniknął jego serwer. Ta fanowska wersja przywraca świąteczną tradycję, zrobioną na nowo pod telefony.",
+
+  tribute: "Fanowski hołd dla oryginalnego woofmaker.com.",
+  legal: "Home Alone © 20th Century Studios. Strona niepowiązana i niezatwierdzona.",
+  openSource: "Otwarty kod:",
+  woofsCreated: "stworzonych Woofów", countAria: "Stworzonych Woofów: {n}",
+  language: "Język",
+
+  statusScene: "Przygotowuję scenę…", statusWrap: "Pakuję twojego GIF-a…",
+  statusReady: "WOOF! Gotowe do udostępnienia.",
+  statusError: "Coś poszło nie tak przy tworzeniu GIF-a. Spróbować jeszcze raz?",
+  toastScene: "Nie udało się załadować sceny. Sprawdź połączenie i odśwież stronę.",
+  toastPhoto: "To zdjęcie się nie otworzyło. Spróbuj innego.",
+  toastShare: "Nie udało się udostępnić. Użyj Zapisz.",
+  unsupported: "Twoja przeglądarka nie jest jeszcze obsługiwana.",
+  face: ["TWOJA", "TWARZ", "TUTAJ"],
+  shareText: "Buzz, twoja dziewczyna… HAU! 🐶",
+  cap1: "Buzz, twoja dziewczyna...", cap2: "HAU!",
+};
+
 // slug: the address (/<slug>/; English lives at /).  htmlLang: <html lang>.
 // hreflang: what search engines are told.  name: shown in the language picker.
 export const LANGS = {
@@ -394,6 +844,13 @@ export const LANGS = {
   zh: { htmlLang: 'zh-Hans', hreflang: 'zh-Hans', ogLocale: 'zh_CN', name: '简体中文', t: zh },
   'zh-hant': { htmlLang: 'zh-Hant', hreflang: 'zh-Hant', ogLocale: 'zh_TW', name: '繁體中文', t: zhHant },
   ko: { htmlLang: 'ko', hreflang: 'ko', ogLocale: 'ko_KR', name: '한국어', t: ko },
+  fr: { htmlLang: 'fr', hreflang: 'fr', ogLocale: 'fr_FR', name: 'Français', t: fr },
+  de: { htmlLang: 'de', hreflang: 'de', ogLocale: 'de_DE', name: 'Deutsch', t: de },
+  it: { htmlLang: 'it', hreflang: 'it', ogLocale: 'it_IT', name: 'Italiano', t: it },
+  nl: { htmlLang: 'nl', hreflang: 'nl', ogLocale: 'nl_NL', name: 'Nederlands', t: nl },
+  pl: { htmlLang: 'pl', hreflang: 'pl', ogLocale: 'pl_PL', name: 'Polski', t: pl },
+  ru: { htmlLang: 'ru', hreflang: 'ru', ogLocale: 'ru_RU', name: 'Русский', t: ru },
+  ja: { htmlLang: 'ja', hreflang: 'ja', ogLocale: 'ja_JP', name: '日本語', t: ja },
 };
 
 // Text for a language, falling back to English for any missing key.

@@ -118,11 +118,11 @@ export function facePixels(faceCanvas) {
 }
 
 function drawCaption(ctx, text, W, H) {
-  // Chinese, Japanese and Korean aren't in the meme font, so those captions use
-  // the device's own heavy font instead.
-  const cjk = /[\u3000-\u9fff\uac00-\ud7af]/.test(text);
-  const family = cjk
-    ? '900 SIZEpx system-ui, "PingFang SC", "Apple SD Gothic Neo", "Microsoft YaHei", "Malgun Gothic", "Noto Sans CJK KR", sans-serif'
+  // Chinese, Japanese, Korean and Cyrillic aren't in the meme font, so those
+  // captions use the device's own heavy font instead.
+  const otherScript = /[\u0400-\u04ff\u3000-\u9fff\uac00-\ud7af]/.test(text);
+  const family = otherScript
+    ? '900 SIZEpx system-ui, "PingFang SC", "Hiragino Sans", "Apple SD Gothic Neo", "Microsoft YaHei", "Yu Gothic", "Malgun Gothic", "Noto Sans CJK KR", sans-serif'
     : 'SIZEpx Anton, Impact, "Arial Black", sans-serif';
   let size = Math.round(H * (text.length < 8 ? 0.17 : 0.105));
   ctx.font = family.replace('SIZE', size);

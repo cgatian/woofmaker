@@ -14,12 +14,12 @@ Live at **[woofmaker.org](https://www.woofmaker.org)**. A fan-made revival of th
 
 ## Languages
 
-The site is available in English, Spanish, Portuguese, Chinese (Simplified and Traditional) and Korean. The GIF captions for each come from the film's own subtitle tracks.
+The site is available in 13 languages. For English, Spanish, Portuguese, Chinese (Simplified and Traditional) and Korean, the GIF captions come from the film's own subtitle tracks. French, German, Italian, Dutch, Polish, Russian and Japanese are translated by hand, captions included.
 
 - All text lives in `public/js/strings.js`. `public/index.html` is a template: the server fills `{{key}}` placeholders with that language's text, so each language is real HTML that search engines can read.
-- English is served at `/`, the others at `/es/`, `/pt/`, `/zh/`, `/zh-hant/` and `/ko/`, each with `hreflang` links to the rest.
+- English is served at `/`, the others at `/<slug>/` (`/es/`, `/fr/`, `/ja/` and so on), each with `hreflang` links to the rest. `/sitemap.xml` is generated from the same list.
 - A visitor to `/` is sent to their browser's preferred language. Picking a language in the footer sets a `lang` cookie that overrides that.
-- To add a language, add an entry to `strings.js` and a `<url>` block to `public/sitemap.xml`.
+- To add a language, add an entry to `strings.js`. Nothing else needs to change.
 
 ## Run locally
 
