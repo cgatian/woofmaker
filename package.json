@@ -1,0 +1,28 @@
+{
+  "name": "woofmaker",
+  "version": "1.0.0",
+  "description": "Make your own \"Buzz, your girlfriend... WOOF!\" GIF on your phone.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "build:scene": "python tools/build_scene.py"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cgatian/woofmaker.git"
+  },
+  "license": "MIT",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/cgatian/woofmaker/issues"
+  },
+  "homepage": "https://github.com/cgatian/woofmaker#readme",
+  "dependencies": {
+    "gifenc": "^1.0.3"
+  },
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  }
+}
