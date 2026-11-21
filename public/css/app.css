@@ -62,7 +62,7 @@ h2 { font: 400 22px/1.2 "Lilita One", system-ui, sans-serif; margin: 0; }
 .stage {
   position: relative; margin: 18px 0 0;
   border-radius: var(--radius); overflow: hidden;
-  background: #000; aspect-ratio: 640 / 347;
+  background: #000; aspect-ratio: 480 / 260;
   box-shadow: 0 0 0 3px rgba(242, 193, 78, .9), 0 0 0 9px var(--red), 0 14px 40px rgba(0, 0, 0, .5);
   margin-left: 9px; margin-right: 9px;
 }

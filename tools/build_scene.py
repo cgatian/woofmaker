@@ -4,8 +4,10 @@ Builds the scene assets the site needs from your own copy of the movie.
     python tools/build_scene.py path/to/home-alone.mp4
 
 Writes into public/scene/:
-  frames.jpg   sprite sheet of every GIF frame (photo close-up + Kevin's "woof")
-  thumbs.png   sprite sheet of Kevin's thumbs (drawn back on top of the new photo)
+  frames-N.jpg sprite sheets of every GIF frame (Kevin picks up the photo, the
+               photo close-up, then his "woof"), a few small sheets so phones
+               never have to decode one huge image
+  thumbs-N.png sprite sheets of Kevin's thumbs (drawn back on top of the new photo)
   scene.json   frame timing, sprite layout, the photo's 4 corners per frame, captions
 
 The movie file itself never goes in the repo. Requires ffmpeg on PATH and
@@ -16,15 +18,16 @@ import cv2
 import numpy as np
 
 # ---- Scene settings (times are in the 1990 theatrical cut, 23.976 fps) ----
-START = "00:22:56.10"      # a few frames before the cut to the photo close-up
-DURATION = 5.2             # seconds to pull from the movie
+START = "00:22:54.00"      # Kevin looks over and picks up the frame
+DURATION = 7.3             # seconds to pull from the movie
 END_AFTER_WOOF = 23 * 60 + 0.9   # stop just after Kevin says "Woof!"
-STEP = 2                   # keep every 2nd frame -> ~12 fps GIF
-OUT_W = 640                # output width in px
+STEP = 3                   # keep every 3rd frame -> ~8 fps GIF (keeps the file small)
+OUT_W = 480                # scene width in px (the GIF itself is scaled to 360)
 GAMMA = 0.85               # <1 brightens the (fairly dark) film frames
 SHARPEN = 0.6              # unsharp-mask strength applied after downscaling
 CROP_TOP, CROP_BOTTOM = 20, 1060   # trim the letterbox bars (1080p source)
-SPRITE_COLS = 8
+SPRITE_COLS = 6
+SPRITE_ROWS = 4            # frames per sheet = cols * rows
 # Photo corners (TL, TR, BR, BL) on the first close-up frame, in 1920x1080 px.
 REF_QUAD = np.float32([(461, 184), (1012, 70), (1273, 863), (698, 1057)])
 # Areas where Kevin's thumbs can be, on the first close-up frame.
@@ -123,12 +126,14 @@ def main():
     cuts = find_cuts(frames)
     assert len(cuts) >= 2, f"expected two shot cuts, found {cuts}"
     c0, c1 = cuts[0], cuts[1]           # close-up is frames[c0:c1]
+    assert abs(t_of(c0) - (22 * 60 + 56.18)) < 0.2, f"close-up cut not where expected: {t_of(c0):.2f}s"
     print(f"close-up: {t_of(c0):.2f}s - {t_of(c1):.2f}s ({c1 - c0} frames)")
     hs = track(frames[c0:c1])
 
     scale = OUT_W / 1920
     out_h = round((CROP_BOTTOM - CROP_TOP) * scale)
-    keep = [i for i in range(c0, len(frames), STEP) if t_of(i) <= END_AFTER_WOOF]
+    # every STEP-th frame, aligned so the first close-up frame is included
+    keep = [i for i in range(c0 % STEP, len(frames), STEP) if t_of(i) <= END_AFTER_WOOF]
 
     tiles, thumbs, meta = [], [], []
     for i in keep:
@@ -136,7 +141,7 @@ def main():
         small = enhance(cv2.resize(img[CROP_TOP:CROP_BOTTOM], (OUT_W, out_h), interpolation=cv2.INTER_AREA))
         tiles.append(small)
         entry = {"t": round(t_of(i), 3)}
-        if i < c1:
+        if c0 <= i < c1:
             H = hs[i - c0]
             q = cv2.perspectiveTransform(REF_QUAD[None], H)[0]
             entry["quad"] = [[round(float(x) * scale, 2), round((float(y) - CROP_TOP) * scale, 2)] for x, y in q]
@@ -148,17 +153,27 @@ def main():
             entry["thumbs"] = len(thumbs) - 1
         meta.append(entry)
 
-    def sheet(imgs, ch):
-        rows = -(-len(imgs) // SPRITE_COLS)
-        s = np.zeros((rows * out_h, SPRITE_COLS * OUT_W, ch), np.uint8)
-        for k, im in enumerate(imgs):
-            r, c = divmod(k, SPRITE_COLS)
-            s[r * out_h:(r + 1) * out_h, c * OUT_W:(c + 1) * OUT_W] = im
-        return s
+    per_sheet = SPRITE_COLS * SPRITE_ROWS
+
+    def write_sheets(imgs, ch, name, ext, params):
+        names = []
+        for n in range(0, len(imgs), per_sheet):
+            chunk = imgs[n:n + per_sheet]
+            rows = -(-len(chunk) // SPRITE_COLS)
+            s = np.zeros((rows * out_h, SPRITE_COLS * OUT_W, ch), np.uint8)
+            for k, im in enumerate(chunk):
+                r, c = divmod(k, SPRITE_COLS)
+                s[r * out_h:(r + 1) * out_h, c * OUT_W:(c + 1) * OUT_W] = im
+            names.append(f"{name}-{n // per_sheet}.{ext}")
+            cv2.imwrite(os.path.join(OUT, names[-1]), s, params)
+        return names
 
     os.makedirs(OUT, exist_ok=True)
-    cv2.imwrite(os.path.join(OUT, "frames.jpg"), sheet(tiles, 3), [cv2.IMWRITE_JPEG_QUALITY, 90])
-    cv2.imwrite(os.path.join(OUT, "thumbs.png"), sheet(thumbs, 4), [cv2.IMWRITE_PNG_COMPRESSION, 9])
+    for old in os.listdir(OUT):                      # clear sheets from earlier builds
+        if old.startswith(("frames", "thumbs")):
+            os.remove(os.path.join(OUT, old))
+    frame_sheets = write_sheets(tiles, 3, "frames", "jpg", [cv2.IMWRITE_JPEG_QUALITY, 90])
+    thumb_sheets = write_sheets(thumbs, 4, "thumbs", "png", [cv2.IMWRITE_PNG_COMPRESSION, 9])
 
     # Frame delays in GIF centiseconds, alternated so the total matches real time.
     delays, acc = [], 0.0
@@ -170,7 +185,8 @@ def main():
     for e, d in zip(meta, delays):
         e["delay"] = d
     scene = {
-        "width": OUT_W, "height": out_h, "cols": SPRITE_COLS,
+        "width": OUT_W, "height": out_h, "cols": SPRITE_COLS, "perSheet": per_sheet,
+        "frameSheets": frame_sheets, "thumbSheets": thumb_sheets,
         "photoAspect": 0.63,
         "frames": meta,
         "captions": [{"text": c["text"], "start": round(c["start"] - t0, 3), "end": round(c["end"] - t0, 3)}

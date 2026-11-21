@@ -6,10 +6,18 @@ export const FACE_H = Math.round(FACE_W / 0.63);
 
 export async function loadScene(base = '/scene/') {
   const scene = await (await fetch(base + 'scene.json')).json();
-  const [frames, thumbs] = await Promise.all([loadImg(base + 'frames.jpg'), loadImg(base + 'thumbs.png')]);
-  scene.framesImg = frames;
-  scene.thumbsImg = thumbs;
+  [scene.frameImgs, scene.thumbImgs] = await Promise.all([
+    Promise.all(scene.frameSheets.map(f => loadImg(base + f))),
+    Promise.all(scene.thumbSheets.map(f => loadImg(base + f))),
+  ]);
   return scene;
+}
+
+// Draws tile `i` from a set of sprite sheets onto ctx at 0,0.
+function drawTile(ctx, sheets, scene, i) {
+  const { width: W, height: H, cols, perSheet } = scene;
+  const local = i % perSheet;
+  ctx.drawImage(sheets[Math.floor(i / perSheet)], (local % cols) * W, Math.floor(local / cols) * H, W, H, 0, 0, W, H);
 }
 
 export function loadImg(src) {
@@ -125,16 +133,14 @@ function drawCaption(ctx, text, W, H) {
 
 // Draws frame `i` into ctx (sized scene.width x scene.height).
 export function renderFrame(ctx, scene, i, face, opts = {}) {
-  const { width: W, height: H, cols } = scene;
+  const { width: W, height: H } = scene;
   const f = scene.frames[i];
-  const sx = (i % cols) * W, sy = Math.floor(i / cols) * H;
-  ctx.drawImage(scene.framesImg, sx, sy, W, H, 0, 0, W, H);
+  drawTile(ctx, scene.frameImgs, scene, i);
   if (f.quad && face) {
     const img = ctx.getImageData(0, 0, W, H);
     warpFace(img.data, W, H, f.quad, face, i + 1);
     ctx.putImageData(img, 0, 0);
-    const ti = f.thumbs;
-    ctx.drawImage(scene.thumbsImg, (ti % cols) * W, Math.floor(ti / cols) * H, W, H, 0, 0, W, H);
+    drawTile(ctx, scene.thumbImgs, scene, f.thumbs);
   }
   if (opts.captions) {
     const cap = scene.captions.find(c => f.t >= c.start && f.t < c.end);

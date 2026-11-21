@@ -2,7 +2,7 @@ import { loadScene, renderFrame, renderAll, facePixels, play } from './render.js
 
 const $ = sel => document.querySelector(sel);
 const ASPECT = 0.63;               // width / height of the photo in Kevin's frame
-const PREVIEW_FRAME = 12;          // close-up frame used for the live preview
+const PREVIEW_OFFSET = 8;          // which close-up frame the live preview shows
 
 const state = {
   scene: null,
@@ -234,7 +234,8 @@ function schedulePreview() {
     pending = false;
     if (!state.scene || !state.img) return;
     const mini = $('#mini');
-    renderFrame(mini.getContext('2d', { willReadFrequently: true }), state.scene, PREVIEW_FRAME, facePixels(faceCanvas()), {});
+    const first = state.scene.frames.findIndex(f => f.quad);
+    renderFrame(mini.getContext('2d', { willReadFrequently: true }), state.scene, first + PREVIEW_OFFSET, facePixels(faceCanvas()), {});
   });
 }
 window.addEventListener('resize', () => {
@@ -264,7 +265,7 @@ $('#make').addEventListener('click', async () => {
 
   const worker = new Worker('/js/gif-worker.js', { type: 'module' });
   worker.onmessage = ({ data }) => {
-    if (data.progress != null) setProgress(0.3 + data.progress * 0.7, 'Wrapping your GIF…');
+    if (data.progress != null) setProgress(0.3 + data.progress * 0.7, data.attempt ? 'Making it smaller to share…' : 'Wrapping your GIF…');
     if (data.done) {
       worker.terminate();
       state.gifBlob = new Blob([data.bytes], { type: 'image/gif' });
@@ -284,10 +285,11 @@ $('#make').addEventListener('click', async () => {
     document.body.classList.remove('working');
     setProgress(0, 'Something went wrong making the GIF. Try again?');
   };
+  // Copied, not transferred: the preview above keeps playing these frames.
   worker.postMessage({
     width: scene.width, height: scene.height,
     frames: frames.map(f => ({ buffer: f.data.buffer, delay: f.delay })),
-  }, frames.map(f => f.data.buffer));
+  });
   bar.focus?.();
 });
 

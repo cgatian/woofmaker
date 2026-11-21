@@ -1,14 +1,73 @@
-// Encodes rendered frames into a looping GIF off the main thread.
+// Encodes rendered frames into a looping GIF off the main thread, and keeps the
+// file under MAX_BYTES so it shares quickly everywhere.
 import { GIFEncoder, quantize, applyPalette } from '/vendor/gifenc.esm.js';
+
+const MAX_BYTES = 1_000_000;   // hard cap: under 1 MB
+
+// Tried in order until the GIF fits. The first one fits for almost every photo;
+// the rest trade a little size/colour for a guaranteed small file.
+//   width: GIF width in px   colors: palette size (power of 2)
+//   keep:  a pixel that changed by less than this per channel is left as-is
+const LADDER = [
+  { width: 360, colors: 128, keep: 12 },
+  { width: 360, colors: 128, keep: 18 },
+  { width: 320, colors: 128, keep: 14 },
+  { width: 320, colors: 64, keep: 16 },
+  { width: 280, colors: 64, keep: 18 },
+  { width: 240, colors: 64, keep: 20 },
+];
 
 // 4x4 ordered (Bayer) dither: a fixed, gentle pattern that breaks up colour
 // banding in gradients without the frame-to-frame shimmer of error diffusion.
 const BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5].map(v => (v / 16 - 0.47) * 4);
-// A pixel that changed by less than this (per channel) since what's already on
-// screen is left transparent, so the previous frame shows through. Most of each
-// frame barely changes, so this shrinks the file a lot.
-const KEEP_THRESHOLD = 8;
-const TRANSPARENT = 255;   // palette slot reserved for "unchanged"
+
+// Which source pixels (and how much of each) land in every destination pixel.
+function spans(srcN, dstN) {
+  const out = [];
+  const r = srcN / dstN;
+  for (let d = 0; d < dstN; d++) {
+    const a = d * r, b = (d + 1) * r, list = [];
+    for (let s = Math.floor(a); s < Math.min(srcN, Math.ceil(b)); s++) {
+      list.push(s, (Math.min(s + 1, b) - Math.max(s, a)) / r);
+    }
+    out.push(list);
+  }
+  return out;
+}
+
+// Area-average downscale of RGBA pixels (same result in every browser).
+function makeResizer(sw, sh, dw, dh) {
+  if (sw === dw && sh === dh) return rgba => rgba;
+  const xs = spans(sw, dw), ys = spans(sh, dh);
+  const tmp = new Float32Array(dw * sh * 3);
+  return rgba => {
+    for (let y = 0; y < sh; y++) {
+      for (let x = 0; x < dw; x++) {
+        const l = xs[x]; let r = 0, g = 0, b = 0;
+        for (let k = 0; k < l.length; k += 2) {
+          const i = (y * sw + l[k]) * 4, w = l[k + 1];
+          r += rgba[i] * w; g += rgba[i + 1] * w; b += rgba[i + 2] * w;
+        }
+        const o = (y * dw + x) * 3;
+        tmp[o] = r; tmp[o + 1] = g; tmp[o + 2] = b;
+      }
+    }
+    const out = new Uint8ClampedArray(dw * dh * 4);
+    for (let y = 0; y < dh; y++) {
+      const l = ys[y];
+      for (let x = 0; x < dw; x++) {
+        let r = 0, g = 0, b = 0;
+        for (let k = 0; k < l.length; k += 2) {
+          const i = (l[k] * dw + x) * 3, w = l[k + 1];
+          r += tmp[i] * w; g += tmp[i + 1] * w; b += tmp[i + 2] * w;
+        }
+        const o = (y * dw + x) * 4;
+        out[o] = r; out[o + 1] = g; out[o + 2] = b; out[o + 3] = 255;
+      }
+    }
+    return out;
+  };
+}
 
 function dither(rgba, width) {
   const out = new Uint8ClampedArray(rgba.length);
@@ -23,33 +82,46 @@ function dither(rgba, width) {
   return out;
 }
 
-self.onmessage = ({ data }) => {
-  const { frames, width, height } = data;
-  const n = width * height;
+function encode(frames, sw, sh, { width, colors, keep }, onProgress) {
+  const w = Math.min(width, sw), h = Math.round(w * sh / sw), n = w * h;
+  const resize = makeResizer(sw, sh, w, h);
+  const transparent = colors - 1;               // palette slot meaning "unchanged"
   const gif = GIFEncoder();
   const shown = new Uint8ClampedArray(n * 3);   // what the viewer currently sees
   frames.forEach((f, k) => {
-    const rgba = new Uint8ClampedArray(f.buffer);
-    const palette = quantize(rgba, 255);
-    const index = applyPalette(dither(rgba, width), palette);
-    palette.push([0, 0, 0]);                      // slot 255: transparent
+    const rgba = resize(new Uint8ClampedArray(f.buffer));
+    const palette = quantize(rgba, colors - 1);
+    const index = applyPalette(dither(rgba, w), palette);
+    while (palette.length < colors) palette.push([0, 0, 0]);
+    // Pixels that barely changed since the last frame stay transparent, so the
+    // previous frame shows through. Most of each frame is still, so this is
+    // where nearly all the file-size saving comes from.
     for (let p = 0; p < n; p++) {
       const c = palette[index[p]], i = p * 4, s = p * 3;
       if (k > 0 &&
-          Math.abs(rgba[i] - shown[s]) < KEEP_THRESHOLD &&
-          Math.abs(rgba[i + 1] - shown[s + 1]) < KEEP_THRESHOLD &&
-          Math.abs(rgba[i + 2] - shown[s + 2]) < KEEP_THRESHOLD) {
-        index[p] = TRANSPARENT;
+          Math.abs(rgba[i] - shown[s]) < keep &&
+          Math.abs(rgba[i + 1] - shown[s + 1]) < keep &&
+          Math.abs(rgba[i + 2] - shown[s + 2]) < keep) {
+        index[p] = transparent;
       } else {
         shown[s] = c[0]; shown[s + 1] = c[1]; shown[s + 2] = c[2];
       }
     }
-    gif.writeFrame(index, width, height, k === 0
+    gif.writeFrame(index, w, h, k === 0
       ? { palette, delay: f.delay * 10 }
-      : { palette, delay: f.delay * 10, transparent: true, transparentIndex: TRANSPARENT, dispose: 1 });
-    self.postMessage({ progress: (k + 1) / frames.length });
+      : { palette, delay: f.delay * 10, transparent: true, transparentIndex: transparent, dispose: 1 });
+    onProgress((k + 1) / frames.length);
   });
   gif.finish();
-  const bytes = gif.bytes();
-  self.postMessage({ done: true, bytes }, [bytes.buffer]);
+  return { bytes: gif.bytes(), width: w, height: h };
+}
+
+self.onmessage = ({ data }) => {
+  const { frames, width, height } = data;
+  let result;
+  for (let a = 0; a < LADDER.length; a++) {
+    result = encode(frames, width, height, LADDER[a], progress => self.postMessage({ progress, attempt: a }));
+    if (result.bytes.length <= MAX_BYTES) break;
+  }
+  self.postMessage({ done: true, ...result }, [result.bytes.buffer]);
 };
