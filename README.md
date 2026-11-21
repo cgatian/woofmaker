@@ -2,7 +2,7 @@
 
 **Buzz, your girlfriend… WOOF!** Put anyone in Buzz's picture frame from *Home Alone* and get a shareable GIF in seconds.
 
-Live at **[woofmaker.org](https://woofmaker.org)**. A fan-made revival of the original woofmaker.com (2013), rebuilt for phones.
+Live at **[woofmaker.org](https://www.woofmaker.org)**. A fan-made revival of the original woofmaker.com (2013), rebuilt for phones.
 
 ## How it works
 
@@ -32,7 +32,9 @@ python tools/make_og.py path/to/home-alone.mp4       # link-preview image + app 
 
 ## Deploy (Railway)
 
-The repo deploys as-is: Railway runs `npm install` and then `node server.js` (see `railway.json`). The health check is `/healthz`. Set `CANONICAL_HOST` if the site moves off `woofmaker.org`. Requests to `www.` are redirected there.
+The repo deploys as-is: Railway runs `npm install` and then `node server.js`. The health check is `/healthz`.
+
+The main address is `www.woofmaker.org` (a CNAME to Railway). The bare `woofmaker.org` is forwarded there by Squarespace, because Squarespace allows no CNAME on the bare domain and no ALIAS while DNSSEC is on. If a request for the bare domain does reach the server, it redirects to www. Set `CANONICAL_HOST` to change the main address.
 
 ## Legal
 

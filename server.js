@@ -8,7 +8,7 @@ import { gzipSync } from 'node:zlib';
 const ROOT = dirname(fileURLToPath(import.meta.url));
 const PUBLIC = join(ROOT, 'public');
 const PORT = Number(process.env.PORT) || 3000;
-const CANONICAL_HOST = process.env.CANONICAL_HOST || 'woofmaker.org';
+const CANONICAL_HOST = process.env.CANONICAL_HOST || 'www.woofmaker.org';
 
 // Extra files served from outside public/
 const ALIASES = {
@@ -34,6 +34,7 @@ const COMPRESSIBLE = new Set(['.html', '.js', '.css', '.json', '.svg', '.txt', '
 
 const SECURITY_HEADERS = {
   'X-Content-Type-Options': 'nosniff',
+  'Strict-Transport-Security': 'max-age=31536000',
   'Referrer-Policy': 'strict-origin-when-cross-origin',
   'Permissions-Policy': 'interest-cohort=()',
   'Content-Security-Policy': [
@@ -66,9 +67,17 @@ const server = createServer(async (req, res) => {
     res.writeHead(200, { 'Content-Type': 'text/plain' });
     return res.end('ok');
   }
-  // www.woofmaker.org -> woofmaker.org, so search engines see one site
+  // Send the other spelling of the domain (with/without www) to the main one,
+  // so search engines see one site.
   const host = (req.headers.host || '').toLowerCase().split(':')[0];
-  if (host === 'www.' + CANONICAL_HOST) {
+  const alternate = CANONICAL_HOST.startsWith('www.') ? CANONICAL_HOST.slice(4) : 'www.' + CANONICAL_HOST;
+  // Railway terminates TLS and tells us the original scheme. Force HTTPS.
+  const proto = req.headers['x-forwarded-proto'];
+  if (proto === 'http' && host !== 'localhost' && host !== '127.0.0.1') {
+    res.writeHead(301, { Location: `https://${host === alternate ? CANONICAL_HOST : host}${url.pathname}${url.search}` });
+    return res.end();
+  }
+  if (host === alternate) {
     res.writeHead(301, { Location: `https://${CANONICAL_HOST}${url.pathname}${url.search}` });
     return res.end();
   }
@@ -83,14 +92,16 @@ const server = createServer(async (req, res) => {
     let entry = cache.get(file);
     if (!entry) {
       const body = await readFile(file);
-      entry = { body, gz: COMPRESSIBLE.has(ext) ? gzipSync(body) : null };
+      entry = { body, gz: COMPRESSIBLE.has(ext) ? gzipSync(body) : null, mtime: (await stat(file)).mtime.toUTCString() };
       if (process.env.NODE_ENV === 'production') cache.set(file, entry);
     }
     const headers = {
       ...SECURITY_HEADERS,
       'Content-Type': TYPES[ext] || 'application/octet-stream',
-      // HTML always revalidates; everything else can be cached for a day.
-      'Cache-Control': ext === '.html' ? 'no-cache' : 'public, max-age=86400',
+      // Code and small text files always revalidate so deploys show up at once;
+      // images can be cached for an hour.
+      'Cache-Control': COMPRESSIBLE.has(ext) ? 'no-cache' : 'public, max-age=3600',
+      'Last-Modified': entry.mtime,
       Vary: 'Accept-Encoding',
     };
     let body = entry.body;

@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://woofmaker.org/sitemap.xml
+Sitemap: https://www.woofmaker.org/sitemap.xml

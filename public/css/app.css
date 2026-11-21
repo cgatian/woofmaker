@@ -48,13 +48,11 @@ main { max-width: 520px; margin: 0 auto; padding: 0 16px; position: relative; z-
 .screen { min-height: 100dvh; display: flex; flex-direction: column; padding-top: max(12px, env(safe-area-inset-top)); }
 
 .brand { text-align: center; padding: 18px 0 6px; }
-h1 {
-  font: 400 clamp(44px, 14vw, 64px)/1 "Lilita One", system-ui, sans-serif;
-  margin: 0; letter-spacing: .5px;
-  color: var(--ink);
-  text-shadow: 0 3px 0 var(--red-dark), 0 6px 18px rgba(0, 0, 0, .45);
+h1 { margin: 0; line-height: 0; }
+h1 .logo {
+  display: block; width: min(100%, 440px); height: auto; margin: 4px auto 0;
+  filter: drop-shadow(0 3px 0 var(--red-dark)) drop-shadow(0 6px 14px rgba(0, 0, 0, .45));
 }
-h1 span { color: var(--gold); }
 .tag { margin: 8px 0 0; color: var(--muted); font-size: 17px; }
 .tag b { color: var(--ink); font-family: Anton, Impact, sans-serif; font-weight: 400; letter-spacing: .5px; }
 
