@@ -74,7 +74,7 @@ async function startDemo() {
   demo.closest('.stage').classList.add('ready');
 }
 
-// ---------- "WOOFs made" counter (old-school hit counter) ----------
+// ---------- "Woofs Created" counter in the footer (old-school hit counter) ----------
 function showCount(n) {
   if (!Number.isSafeInteger(n)) return;
   const box = $('#counter');
@@ -83,7 +83,7 @@ function showCount(n) {
     cell.textContent = d;
     return cell;
   }));
-  box.setAttribute('aria-label', `${n.toLocaleString('en-US')} WOOFs made so far`);
+  box.setAttribute('aria-label', `${n.toLocaleString('en-US')} Woofs Created`);
   box.hidden = false;
 }
 fetch('/api/count').then(r => r.json()).then(d => showCount(d.count)).catch(() => {});
@@ -295,11 +295,8 @@ $('#make').addEventListener('click', async () => {
       };
       $('#save').href = state.gifUrl;
       setProgress(1, 'WOOF! Ready to share.');
-      // Add one to the site-wide counter and tell them which number they made.
-      fetch('/api/count', { method: 'POST' }).then(r => r.json()).then(d => {
-        showCount(d.count);
-        if (d.counted) setProgress(1, `WOOF #${d.count.toLocaleString('en-US')}! Ready to share.`);
-      }).catch(() => {});
+      // Add one to the site-wide counter shown in the footer.
+      fetch('/api/count', { method: 'POST' }).then(r => r.json()).then(d => showCount(d.count)).catch(() => {});
     }
   };
   worker.onerror = e => {

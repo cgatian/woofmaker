@@ -83,21 +83,6 @@ h2 { font: 400 22px/1.2 "Lilita One", system-ui, sans-serif; margin: 0; }
   border-radius: 50%; background: var(--green); color: #fff; font-size: 15px;
 }
 
-/* ---------- "WOOFs made" counter: a 90s-style hit counter ---------- */
-.counter { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 22px 0 4px; }
-.digits {
-  display: inline-flex; gap: 2px; padding: 4px;
-  background: #000; border: 3px ridge #a9a9a9; border-radius: 2px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, .5);
-}
-.digits span {
-  display: grid; place-items: center; width: 24px; height: 34px;
-  background: linear-gradient(#1c1c1c, #000 55%, #141414);
-  color: #39ff14; text-shadow: 0 0 6px rgba(57, 255, 20, .75);
-  font: 700 24px/1 "Courier New", Courier, monospace;
-}
-.counter-label { color: var(--muted); font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; }
-
 /* ---------- buttons ---------- */
 .actions { display: grid; gap: 10px; padding: 16px 0 calc(16px + var(--safe-b)); margin-top: auto; }
 .actions.sticky {
@@ -190,6 +175,16 @@ footer {
 footer { line-height: 1.7; }
 footer a { color: var(--ink); text-decoration: underline; text-underline-offset: 2px; padding: 6px 0; display: inline-block; }
 footer a:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+/* "Woofs Created" counter: a small 90s-style hit counter at the very bottom */
+.counter { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px; }
+.digits { display: inline-flex; gap: 1px; padding: 2px; background: #000; border: 2px ridge #a9a9a9; border-radius: 2px; }
+.digits span {
+  display: grid; place-items: center; width: 13px; height: 18px;
+  background: linear-gradient(#1c1c1c, #000 55%, #141414);
+  color: #39ff14; text-shadow: 0 0 4px rgba(57, 255, 20, .7);
+  font: 700 13px/1 "Courier New", Courier, monospace;
+}
+.counter-label { font-size: 12px; }
 body[data-screen="fit"] footer, body[data-screen="result"] footer { display: none; }
 
 .toast {

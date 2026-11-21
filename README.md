@@ -7,7 +7,7 @@ Live at **[woofmaker.org](https://www.woofmaker.org)**. A fan-made revival of th
 ## How it works
 
 - Everything happens in the visitor's browser. Their photo is never uploaded, and the server only serves static files.
-- The one thing the server stores is the "WOOFs made" count shown on the home page: a single number in a JSON file (`counter.js`), no database. On Railway the file lives on a Volume attached to the service (Railway sets `RAILWAY_VOLUME_MOUNT_PATH`), so it survives restarts and redeploys. `GET /api/count` reads it; the page sends `POST /api/count` each time a GIF is made.
+- The one thing the server stores is the count of GIFs made, shown at the bottom of the page as "X Woofs Created", kept as a single number in a JSON file (`counter.js`), no database. On Railway the file lives on a Volume attached to the service (Railway sets `RAILWAY_VOLUME_MOUNT_PATH`), so it survives restarts and redeploys. `GET /api/count` reads it; the page sends `POST /api/count` each time a GIF is made.
 - `public/scene/` holds the pre-built scene (22:54 to 23:00.9 of the film, 12 fps, 480 px wide): a few small sprite sheets of the GIF frames, sprite sheets of Kevin's thumbs, and `scene.json` with the photo's four corners in every frame.
 - `public/js/render.js` warps the visitor's photo into those corners (a perspective transform per frame), puts the thumbs back on top, adds film-style color and grain, and draws the captions.
 - `public/js/gif-worker.js` encodes the GIF in a Web Worker with [gifenc](https://github.com/mattdesl/gifenc). The GIF is encoded once, at 360 px wide and 12 fps, and is usually a little over 1 MB because unchanged pixels are skipped between frames. The settings are the constants at the top of the file.
