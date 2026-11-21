@@ -39,12 +39,12 @@ const SECURITY_HEADERS = {
   'Permissions-Policy': 'interest-cohort=()',
   'Content-Security-Policy': [
     "default-src 'self'",
-    "img-src 'self' blob: data:",
+    "img-src 'self' blob: data: https://*.google-analytics.com https://*.googletagmanager.com",
     "style-src 'self' https://fonts.googleapis.com",
     "font-src https://fonts.gstatic.com",
-    "script-src 'self'",
+    "script-src 'self' https://www.googletagmanager.com",          // Google Analytics tag
     "worker-src 'self'",
-    "connect-src 'self' blob:",
+    "connect-src 'self' blob: https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com",
     "base-uri 'none'",
     "form-action 'none'",
     "frame-ancestors 'none'",

@@ -1,4 +1,5 @@
 import { loadScene, renderFrame, renderAll, facePixels, play } from './render.js';
+import { track } from './analytics.js';
 
 const $ = sel => document.querySelector(sel);
 const ASPECT = 0.63;               // width / height of the photo in Kevin's frame
@@ -87,6 +88,7 @@ for (const input of [$('#cam'), $('#pick')]) {
       return;
     }
     state.placed = false;
+    track('photo_selected', { source: input.id === 'cam' ? 'camera' : 'library' });
     show('fit');
   });
 }
@@ -269,6 +271,7 @@ $('#make').addEventListener('click', async () => {
     if (data.done) {
       worker.terminate();
       state.gifBlob = new Blob([data.bytes], { type: 'image/gif' });
+      track('gif_created', { size_kb: Math.round(state.gifBlob.size / 1024), captions: state.captions ? 'on' : 'off' });
       state.gifUrl = URL.createObjectURL(state.gifBlob);
       result.src = state.gifUrl;
       result.onload = () => {
@@ -307,10 +310,12 @@ shareBtn.addEventListener('click', async () => {
   const file = new File([state.gifBlob], 'woof.gif', { type: 'image/gif' });
   try {
     await navigator.share({ files: [file], title: 'WOOF!', text: 'Buzz, your girlfriend… WOOF! 🐶 ' + location.origin });
+    track('share', { method: 'share_sheet', content_type: 'gif' });
   } catch (e) {
     if (e.name !== 'AbortError') toast('Sharing failed. Use Save instead.');
   }
 });
+$('#save').addEventListener('click', () => { if (state.gifBlob) track('gif_saved'); });
 $('#again').addEventListener('click', () => { state.img = null; show('home'); });
 $('#refit').addEventListener('click', () => history.back());
 
