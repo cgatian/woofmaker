@@ -1,5 +1,12 @@
 import { loadScene, renderFrame, renderAll, facePixels, play } from './render.js';
 import { track } from './analytics.js';
+import { strings } from './strings.js';
+
+// The server renders the page in the visitor's language; the same text table
+// supplies the messages and GIF captions used here.
+const LANG = document.documentElement.dataset.lang || 'en';
+const T = strings(LANG);
+const HOME = location.pathname;    // '/' for English, '/es/' etc. for the others
 
 const $ = sel => document.querySelector(sel);
 const ASPECT = 0.63;               // width / height of the photo in Kevin's frame
@@ -22,7 +29,7 @@ function show(name, push = true) {
   screens.forEach(s => { $('#' + s).hidden = s !== name; });
   document.body.dataset.screen = name;
   window.scrollTo(0, 0);
-  if (push) history.pushState({ screen: name }, '', name === 'home' ? '/' : '#' + name);
+  if (push) history.pushState({ screen: name }, '', name === 'home' ? HOME : '#' + name);
   if (name === 'fit') requestAnimationFrame(() => { sizeEditor(); drawEditor(); schedulePreview(); });
   if (name !== 'result') state.stopResult?.();
 }
@@ -30,7 +37,7 @@ window.addEventListener('popstate', e => {
   const want = e.state?.screen || 'home';
   show(want === 'fit' && !state.img ? 'home' : want === 'result' && !state.gifUrl ? 'home' : want, false);
 });
-history.replaceState({ screen: 'home' }, '', '/');
+history.replaceState({ screen: 'home' }, '', HOME);
 
 // ---------- scene + home demo ----------
 const scenePromise = loadScene().then(scene => {
@@ -44,7 +51,7 @@ const scenePromise = loadScene().then(scene => {
   return scene;
 }).catch(err => {
   console.error(err);
-  toast('Could not load the scene. Check your connection and refresh.');
+  toast(T.toastScene);
 });
 
 function placeholderFace() {
@@ -59,7 +66,7 @@ function placeholderFace() {
   g.beginPath(); g.ellipse(126, 360, 110, 90, 0, 0, Math.PI * 2); g.fill();
   g.fillStyle = '#fff'; g.textAlign = 'center';
   g.font = '700 34px "Lilita One", system-ui, sans-serif';
-  g.fillText('YOUR', 126, 158); g.fillText('FACE', 126, 196); g.fillText('HERE', 126, 234);
+  T.face.forEach((line, i) => g.fillText(line, 126, 158 + i * 38));
   return c;
 }
 
@@ -67,11 +74,20 @@ async function startDemo() {
   await document.fonts.load('40px Anton').catch(() => {});
   await document.fonts.load('34px "Lilita One"').catch(() => {});
   const { scene } = state;
-  const frames = await renderAll(scene, facePixels(placeholderFace()), { captions: true });
+  const frames = await renderAll(scene, facePixels(placeholderFace()), { captions: captionList() });
   const demo = $('#demo');
   state.stopDemo?.();
   state.stopDemo = play(demo, frames, scene.width, scene.height);
   demo.closest('.stage').classList.add('ready');
+}
+
+// The GIF captions in the visitor's language, timed from the scene. Languages
+// whose subtitle track has no second line keep the first one up throughout.
+function captionList() {
+  const [first, second] = state.scene.captions;
+  return T.cap2
+    ? [{ ...first, text: T.cap1 }, { ...second, text: T.cap2 }]
+    : [{ text: T.cap1, start: first.start, end: second.end }];
 }
 
 // ---------- "Woofs Created" counter in the footer (old-school hit counter) ----------
@@ -83,7 +99,7 @@ function showCount(n) {
     cell.textContent = d;
     return cell;
   }));
-  box.setAttribute('aria-label', `${n.toLocaleString('en-US')} Woofs Created`);
+  box.setAttribute('aria-label', T.countAria.replace('{n}', n.toLocaleString(document.documentElement.lang)));
   box.hidden = false;
 }
 fetch('/api/count').then(r => r.json()).then(d => showCount(d.count)).catch(() => {});
@@ -98,7 +114,7 @@ for (const input of [$('#cam'), $('#pick')]) {
       state.img = await loadPhoto(file);
     } catch (e) {
       console.error(e);
-      toast("That photo didn't open. Try a different one.");
+      toast(T.toastPhoto);
       return;
     }
     state.placed = false;
@@ -272,20 +288,20 @@ $('#make').addEventListener('click', async () => {
   const out = $('#out'), result = $('#resultImg'), bar = $('#bar');
   document.body.classList.add('working');
   result.hidden = true; out.hidden = false;
-  setProgress(0, 'Setting the scene…');
+  setProgress(0, T.statusScene);
   await document.fonts.load('40px Anton').catch(() => {});
-  const frames = await renderAll(scene, face, { captions: state.captions }, p => setProgress(p * 0.3, 'Setting the scene…'));
+  const frames = await renderAll(scene, face, { captions: state.captions ? captionList() : null }, p => setProgress(p * 0.3, T.statusScene));
   state.stopResult?.();
   state.stopResult = play(out, frames, scene.width, scene.height);
-  setProgress(0.3, 'Wrapping your GIF…');
+  setProgress(0.3, T.statusWrap);
 
   const worker = new Worker('/js/gif-worker.js', { type: 'module' });
   worker.onmessage = ({ data }) => {
-    if (data.progress != null) setProgress(0.3 + data.progress * 0.7, 'Wrapping your GIF…');
+    if (data.progress != null) setProgress(0.3 + data.progress * 0.7, T.statusWrap);
     if (data.done) {
       worker.terminate();
       state.gifBlob = new Blob([data.bytes], { type: 'image/gif' });
-      track('gif_created', { size_kb: Math.round(state.gifBlob.size / 1024), captions: state.captions ? 'on' : 'off' });
+      track('gif_created', { size_kb: Math.round(state.gifBlob.size / 1024), captions: state.captions ? 'on' : 'off', site_language: LANG });
       state.gifUrl = URL.createObjectURL(state.gifBlob);
       result.src = state.gifUrl;
       result.onload = () => {
@@ -294,7 +310,7 @@ $('#make').addEventListener('click', async () => {
         document.body.classList.remove('working');
       };
       $('#save').href = state.gifUrl;
-      setProgress(1, 'WOOF! Ready to share.');
+      setProgress(1, T.statusReady);
       // Add one to the site-wide counter shown in the footer.
       fetch('/api/count', { method: 'POST' }).then(r => r.json()).then(d => showCount(d.count)).catch(() => {});
     }
@@ -302,7 +318,7 @@ $('#make').addEventListener('click', async () => {
   worker.onerror = e => {
     console.error(e);
     document.body.classList.remove('working');
-    setProgress(0, 'Something went wrong making the GIF. Try again?');
+    setProgress(0, T.statusError);
   };
   // Copied, not transferred: the preview above keeps playing these frames.
   worker.postMessage({
@@ -325,15 +341,23 @@ shareBtn.addEventListener('click', async () => {
   if (!state.gifBlob) return;
   const file = new File([state.gifBlob], 'woof.gif', { type: 'image/gif' });
   try {
-    await navigator.share({ files: [file], title: 'WOOF!', text: 'Buzz, your girlfriend… WOOF! 🐶 ' + location.origin });
+    await navigator.share({ files: [file], title: 'WOOF!', text: T.shareText + ' ' + location.origin + HOME });
     track('share', { method: 'share_sheet', content_type: 'gif' });
   } catch (e) {
-    if (e.name !== 'AbortError') toast('Sharing failed. Use Save instead.');
+    if (e.name !== 'AbortError') toast(T.toastShare);
   }
 });
 $('#save').addEventListener('click', () => { if (state.gifBlob) track('gif_saved'); });
 $('#again').addEventListener('click', () => { state.img = null; show('home'); });
 $('#refit').addEventListener('click', () => history.back());
+
+// ---------- language picker ----------
+// Remembers the choice in a cookie so the server stops auto-picking a language.
+$('#lang').addEventListener('change', e => {
+  const slug = e.target.value;
+  document.cookie = `lang=${slug}; path=/; max-age=31536000; SameSite=Lax`;
+  location.href = slug === 'en' ? '/' : `/${slug}/`;
+});
 
 let toastTimer;
 function toast(msg) {

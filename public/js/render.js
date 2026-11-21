@@ -118,8 +118,20 @@ export function facePixels(faceCanvas) {
 }
 
 function drawCaption(ctx, text, W, H) {
-  const size = Math.round(H * (text.length < 8 ? 0.17 : 0.105));
-  ctx.font = `${size}px Anton, Impact, "Arial Black", sans-serif`;
+  // Chinese, Japanese and Korean aren't in the meme font, so those captions use
+  // the device's own heavy font instead.
+  const cjk = /[\u3000-\u9fff\uac00-\ud7af]/.test(text);
+  const family = cjk
+    ? '900 SIZEpx system-ui, "PingFang SC", "Apple SD Gothic Neo", "Microsoft YaHei", "Malgun Gothic", "Noto Sans CJK KR", sans-serif'
+    : 'SIZEpx Anton, Impact, "Arial Black", sans-serif';
+  let size = Math.round(H * (text.length < 8 ? 0.17 : 0.105));
+  ctx.font = family.replace('SIZE', size);
+  // Shrink long captions (some translations run longer) to fit the frame.
+  const wide = ctx.measureText(text).width, room = W * 0.92;
+  if (wide > room) {
+    size = Math.floor(size * room / wide);
+    ctx.font = family.replace('SIZE', size);
+  }
   ctx.textAlign = 'center';
   ctx.textBaseline = 'alphabetic';
   ctx.lineJoin = 'round';
@@ -142,8 +154,8 @@ export function renderFrame(ctx, scene, i, face, opts = {}) {
     ctx.putImageData(img, 0, 0);
     drawTile(ctx, scene.thumbImgs, scene, f.thumbs);
   }
-  if (opts.captions) {
-    const cap = scene.captions.find(c => f.t >= c.start && f.t < c.end);
+  if (opts.captions) {   // [{ text, start, end }] in seconds from the first frame
+    const cap = opts.captions.find(c => f.t >= c.start && f.t < c.end);
     if (cap) drawCaption(ctx, cap.text, W, H);
   }
 }

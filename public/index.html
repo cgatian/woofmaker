@@ -1,26 +1,28 @@
 <!doctype html>
-<html lang="en">
+<html lang="{{htmlLang}}" data-lang="{{slug}}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>WoofMaker: Buzz, Your Girlfriend… WOOF! GIF Maker (Home Alone)</title>
-  <meta name="description" content="Put anyone in Buzz's picture frame from Home Alone. Make your own “Buzz, your girlfriend… WOOF!” GIF free in seconds, right on your phone. No app, no sign-up, your photo stays on your device.">
-  <link rel="canonical" href="https://www.woofmaker.org/">
+  <title>{{title}}</title>
+  <meta name="description" content="{{a:description}}">
+  <link rel="canonical" href="{{url}}">
+{{hreflang}}
   <meta name="robots" content="index, follow, max-image-preview:large">
   <meta name="theme-color" content="#0e1830">
   <meta name="apple-mobile-web-app-title" content="WoofMaker">
   <meta property="og:site_name" content="WoofMaker">
-  <meta property="og:url" content="https://www.woofmaker.org/">
-  <meta property="og:title" content="Buzz, your girlfriend… WOOF! Make yours.">
-  <meta property="og:description" content="Put anyone in Buzz's picture frame from Home Alone. Free GIF maker that works right on your phone.">
+  <meta property="og:url" content="{{url}}">
+  <meta property="og:locale" content="{{ogLocale}}">
+  <meta property="og:title" content="{{a:ogTitle}}">
+  <meta property="og:description" content="{{a:ogDescription}}">
   <meta property="og:image" content="https://www.woofmaker.org/og.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Buzz's girlfriend's framed photo from Home Alone, with the caption: Buzz, your girlfriend… WOOF!">
+  <meta property="og:image:alt" content="{{a:ogImageAlt}}">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Buzz, your girlfriend… WOOF! Make yours.">
-  <meta name="twitter:description" content="Put anyone in Buzz's picture frame. Free GIF maker for your phone.">
+  <meta name="twitter:title" content="{{a:ogTitle}}">
+  <meta name="twitter:description" content="{{a:twDescription}}">
   <meta name="twitter:image" content="https://www.woofmaker.org/og.jpg">
   <link rel="manifest" href="/site.webmanifest">
   <script type="application/ld+json">
@@ -30,8 +32,9 @@
       {
         "@type": "WebApplication",
         "name": "WoofMaker",
-        "url": "https://www.woofmaker.org/",
-        "description": "Make your own Home Alone “Buzz, your girlfriend… WOOF!” GIF by putting any photo in Buzz's picture frame.",
+        "url": "{{url}}",
+        "inLanguage": "{{htmlLang}}",
+        "description": "{{j:appDescription}}",
         "applicationCategory": "MultimediaApplication",
         "operatingSystem": "Any (works in iPhone, Android and desktop browsers)",
         "image": "https://www.woofmaker.org/og.jpg",
@@ -40,16 +43,11 @@
       {
         "@type": "FAQPage",
         "mainEntity": [
-          { "@type": "Question", "name": "What is the Buzz, your girlfriend… WOOF! meme?",
-            "acceptedAnswer": { "@type": "Answer", "text": "In Home Alone (1990), Kevin snoops through his brother Buzz's room, finds a framed photo of Buzz's girlfriend and says “Buzz, your girlfriend… WOOF!” WoofMaker puts any photo you choose into that picture frame and turns the scene into a GIF." } },
-          { "@type": "Question", "name": "Is WoofMaker free?",
-            "acceptedAnswer": { "@type": "Answer", "text": "Yes. It's free, with no app to install and no sign-up." } },
-          { "@type": "Question", "name": "Is my photo uploaded anywhere?",
-            "acceptedAnswer": { "@type": "Answer", "text": "No. The GIF is made entirely in your browser, so your photo never leaves your phone or computer. The site uses Google Analytics to count visits and how many GIFs get made; it never receives your photo or your GIF." } },
-          { "@type": "Question", "name": "How do I save the GIF on my iPhone?",
-            "acceptedAnswer": { "@type": "Answer", "text": "Tap Share, then Save Image to add it to Photos. You can also send it straight to Messages or any other app from the share sheet." } },
-          { "@type": "Question", "name": "What happened to the original woofmaker.com?",
-            "acceptedAnswer": { "@type": "Answer", "text": "The original WoofMaker from 2013 stopped making GIFs when its server went away. This fan-made version brings it back and works on phones." } }
+          { "@type": "Question", "name": "{{j:faqMemeQ}}", "acceptedAnswer": { "@type": "Answer", "text": "{{j:faqMemeA}}" } },
+          { "@type": "Question", "name": "{{j:q1}}", "acceptedAnswer": { "@type": "Answer", "text": "{{j:a1}}" } },
+          { "@type": "Question", "name": "{{j:q2}}", "acceptedAnswer": { "@type": "Answer", "text": "{{j:a2}}" } },
+          { "@type": "Question", "name": "{{j:q3}}", "acceptedAnswer": { "@type": "Answer", "text": "{{j:a3}}" } },
+          { "@type": "Question", "name": "{{j:q4}}", "acceptedAnswer": { "@type": "Answer", "text": "{{j:a4}}" } }
         ]
       }
     ]
@@ -71,43 +69,43 @@
     <section class="screen" id="home">
       <header class="brand">
         <h1><img class="logo" src="/logo.svg" width="783" height="108" alt="WoofMaker"></h1>
-        <p class="tag">Put anyone in the picture frame.<br>Buzz, your girlfriend… <b>WOOF!</b></p>
+        <p class="tag">{{tagline}}</p>
       </header>
 
       <div class="stage">
-        <canvas id="demo" width="480" height="260" aria-label="Example: the Home Alone scene with a placeholder face in the picture frame"></canvas>
-        <div class="loading">Loading the scene…</div>
+        <canvas id="demo" width="480" height="260" aria-label="{{a:demoAria}}"></canvas>
+        <div class="loading">{{loading}}</div>
       </div>
 
       <ol class="steps">
-        <li><b>1</b>Pick a photo</li>
-        <li><b>2</b>Line up the face</li>
-        <li><b>3</b>Share your WOOF</li>
+        <li><b>1</b>{{step1}}</li>
+        <li><b>2</b>{{step2}}</li>
+        <li><b>3</b>{{step3}}</li>
       </ol>
 
       <div class="actions sticky">
         <label class="btn primary">
-          <span aria-hidden="true">📸</span> Take a selfie
+          <span aria-hidden="true">📸</span> {{selfie}}
           <input id="cam" type="file" accept="image/*" capture="user">
         </label>
         <label class="btn">
-          <span aria-hidden="true">🖼️</span> Choose a photo
+          <span aria-hidden="true">🖼️</span> {{choose}}
           <input id="pick" type="file" accept="image/*">
         </label>
-        <p class="privacy">🔒 Your photo never leaves your phone.</p>
+        <p class="privacy">🔒 {{privacy}}</p>
       </div>
     </section>
 
     <!-- 2. Fit the face -->
     <section class="screen" id="fit" hidden>
       <div class="topbar">
-        <button id="back" class="icon" aria-label="Back">‹</button>
-        <h2>Line up the face</h2>
+        <button id="back" class="icon" aria-label="{{a:back}}">‹</button>
+        <h2>{{lineUp}}</h2>
       </div>
 
       <div class="fit-body">
         <div class="frame">
-          <div id="editor" class="editor" aria-label="Drag to move the photo, pinch to zoom">
+          <div id="editor" class="editor" aria-label="{{a:editorAria}}">
             <canvas id="editCanvas"></canvas>
             <div class="guide" aria-hidden="true"></div>
           </div>
@@ -116,95 +114,85 @@
         <div class="controls">
           <label class="zoom">
             <span aria-hidden="true">−</span>
-            <input id="zoom" type="range" min="-1" max="1.8" step="0.01" value="0" aria-label="Zoom">
+            <input id="zoom" type="range" min="-1" max="1.8" step="0.01" value="0" aria-label="{{a:zoom}}">
             <span aria-hidden="true">+</span>
           </label>
           <div class="row">
             <figure class="mini">
               <canvas id="mini" width="480" height="260"></canvas>
-              <figcaption>Live preview</figcaption>
+              <figcaption>{{livePreview}}</figcaption>
             </figure>
             <label class="switch">
               <input id="captions" type="checkbox" checked>
               <span class="track"><span class="knob"></span></span>
-              Captions
+              {{captions}}
             </label>
           </div>
-          <p class="hint">Drag to move · pinch to zoom · fit the face in the oval</p>
+          <p class="hint">{{hint}}</p>
         </div>
       </div>
 
       <div class="actions sticky">
-        <button id="make" class="btn primary big">Make my WOOF! <span aria-hidden="true">🐶</span></button>
+        <button id="make" class="btn primary big">{{make}} <span aria-hidden="true">🐶</span></button>
       </div>
     </section>
 
     <!-- 3. Result -->
     <section class="screen" id="result" hidden>
       <div class="topbar">
-        <button id="refit" class="icon" aria-label="Adjust the photo">‹</button>
-        <h2>Your WOOF</h2>
+        <button id="refit" class="icon" aria-label="{{a:adjust}}">‹</button>
+        <h2>{{yourWoof}}</h2>
       </div>
 
       <div class="stage result">
         <canvas id="out" width="480" height="260"></canvas>
-        <img id="resultImg" alt="Your WOOF GIF" hidden>
+        <img id="resultImg" alt="{{a:resultAlt}}" hidden>
       </div>
-      <div id="bar" class="bar" role="progressbar" aria-label="Progress"><span></span></div>
+      <div id="bar" class="bar" role="progressbar" aria-label="{{a:progress}}"><span></span></div>
       <p id="status" class="status" aria-live="polite"></p>
-      <p class="send-it">Now send it to your Buzz. <span aria-hidden="true">😈</span></p>
+      <p class="send-it">{{sendIt}} <span aria-hidden="true">😈</span></p>
 
       <div class="actions sticky">
-        <button id="share" class="btn primary big">Share <span aria-hidden="true">🎁</span></button>
+        <button id="share" class="btn primary big">{{share}} <span aria-hidden="true">🎁</span></button>
         <div class="pair">
-          <a id="save" class="btn" download="woof.gif" href="#">Save GIF</a>
-          <button id="again" class="btn">Make another</button>
+          <a id="save" class="btn" download="woof.gif" href="#">{{save}}</a>
+          <button id="again" class="btn">{{again}}</button>
         </div>
-        <p class="privacy ios-tip">iPhone tip: tap Share, then <b>Save Image</b> to keep it in Photos.</p>
+        <p class="privacy ios-tip">{{iosTip}}</p>
       </div>
     </section>
   </main>
 
   <article class="about">
-    <h2>Make a “Buzz, your girlfriend… WOOF!” GIF</h2>
-    <p>
-      It's the best line in <i>Home Alone</i>: Kevin digs through Buzz's room, finds the framed photo of
-      Buzz's girlfriend, and delivers the verdict. WoofMaker puts <em>anyone</em> in that picture frame:
-      your friend, your sibling, your boss, your dog.
-    </p>
-    <h3>How it works</h3>
+    <h2>{{aboutTitle}}</h2>
+    <p>{{aboutBody}}</p>
+    <h3>{{howTitle}}</h3>
     <ol>
-      <li>Take a selfie or pick any photo from your phone.</li>
-      <li>Drag and pinch to fit the face in the frame.</li>
-      <li>Tap <b>Make my WOOF!</b>, then share the GIF to Messages, WhatsApp, Instagram or anywhere.</li>
+      <li>{{how1}}</li>
+      <li>{{how2}}</li>
+      <li>{{how3}}</li>
     </ol>
-    <h3>Questions</h3>
-    <details>
-      <summary>Is it free?</summary>
-      <p>Yes. It's free, with no app and no sign-up.</p>
-    </details>
-    <details>
-      <summary>Is my photo uploaded anywhere?</summary>
-      <p>No. The GIF is made right in your browser. Your photo never leaves your device. The site uses Google Analytics to count visits and how many GIFs get made; it never receives your photo or your GIF.</p>
-    </details>
-    <details>
-      <summary>How do I save it on iPhone?</summary>
-      <p>Tap <b>Share</b>, then <b>Save Image</b>. On Android, tap Share or Save GIF.</p>
-    </details>
-    <details>
-      <summary>What happened to the original woofmaker.com?</summary>
-      <p>The 2013 original stopped making GIFs when its server went away. This fan-made version brings the holiday tradition back, rebuilt for phones.</p>
-    </details>
+    <h3>{{questions}}</h3>
+    <details><summary>{{q1}}</summary><p>{{a1}}</p></details>
+    <details><summary>{{q2}}</summary><p>{{a2}}</p></details>
+    <details><summary>{{q3}}</summary><p>{{a3}}</p></details>
+    <details><summary>{{q4}}</summary><p>{{a4}}</p></details>
   </article>
 
   <footer>
-    A fan-made tribute to the original woofmaker.com. <br>
-    Home Alone © 20th Century Studios. Not affiliated or endorsed. <br>
-    Open source: <a href="https://github.com/cgatian/woofmaker" target="_blank" rel="noopener">github.com/cgatian/woofmaker</a>
+    {{tribute}} <br>
+    {{legal}} <br>
+    {{openSource}} <a href="https://github.com/cgatian/woofmaker" target="_blank" rel="noopener">github.com/cgatian/woofmaker</a>
     <div class="counter" id="counter" role="img" hidden>
       <span class="digits" id="digits" aria-hidden="true"></span>
-      <span class="counter-label" aria-hidden="true">Woofs Created</span>
+      <span class="counter-label" aria-hidden="true">{{woofsCreated}}</span>
     </div>
+    <label class="lang-pick">
+      <span aria-hidden="true">🌐</span>
+      <select id="lang" aria-label="{{a:language}}">
+{{langOptions}}
+      </select>
+    </label>
   </footer>
 
   <div id="toast" class="toast" role="status" hidden></div>

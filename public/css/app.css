@@ -185,6 +185,12 @@ footer a:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
   font: 700 13px/1 "Courier New", Courier, monospace;
 }
 .counter-label { font-size: 12px; }
+.lang-pick { display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; }
+.lang-pick select {
+  min-height: 36px; padding: 4px 10px; border-radius: 10px;
+  border: 1px solid var(--line); background: var(--night-2); color: var(--ink); font: inherit; font-size: 13px;
+}
+.lang-pick select:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
 body[data-screen="fit"] footer, body[data-screen="result"] footer { display: none; }
 
 .toast {

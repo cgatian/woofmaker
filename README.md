@@ -12,6 +12,15 @@ Live at **[woofmaker.org](https://www.woofmaker.org)**. A fan-made revival of th
 - `public/js/render.js` warps the visitor's photo into those corners (a perspective transform per frame), puts the thumbs back on top, adds film-style color and grain, and draws the captions.
 - `public/js/gif-worker.js` encodes the GIF in a Web Worker with [gifenc](https://github.com/mattdesl/gifenc). The GIF is encoded once, at 360 px wide and 12 fps, and is usually a little over 1 MB because unchanged pixels are skipped between frames. The settings are the constants at the top of the file.
 
+## Languages
+
+The site is available in English, Spanish, Portuguese, Chinese (Simplified and Traditional) and Korean. The GIF captions for each come from the film's own subtitle tracks.
+
+- All text lives in `public/js/strings.js`. `public/index.html` is a template: the server fills `{{key}}` placeholders with that language's text, so each language is real HTML that search engines can read.
+- English is served at `/`, the others at `/es/`, `/pt/`, `/zh/`, `/zh-hant/` and `/ko/`, each with `hreflang` links to the rest.
+- A visitor to `/` is sent to their browser's preferred language. Picking a language in the footer sets a `lang` cookie that overrides that.
+- To add a language, add an entry to `strings.js` and a `<url>` block to `public/sitemap.xml`.
+
 ## Run locally
 
 ```sh
