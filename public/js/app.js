@@ -34,6 +34,11 @@ history.replaceState({ screen: 'home' }, '', '/');
 // ---------- scene + home demo ----------
 const scenePromise = loadScene().then(scene => {
   state.scene = scene;
+  // keep every scene canvas at the scene's real size, whatever the HTML says
+  for (const id of ['demo', 'mini', 'out']) {
+    const c = $('#' + id);
+    c.width = scene.width; c.height = scene.height;
+  }
   startDemo();
   return scene;
 }).catch(err => {
@@ -242,6 +247,7 @@ $('#back').addEventListener('click', () => history.back());
 $('#make').addEventListener('click', async () => {
   const scene = await scenePromise;
   if (!scene) return;
+  if (!state.placed) placeInitial();
   const face = facePixels(faceCanvas());
   if (state.gifUrl) URL.revokeObjectURL(state.gifUrl);
   state.gifUrl = null; state.gifBlob = null;

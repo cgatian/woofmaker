@@ -1,7 +1,7 @@
 // Compositing: draws a scene frame, warps the face photo into Kevin's picture
 // frame, puts his thumbs back on top, and adds captions.
 
-export const FACE_W = 180;               // working size of the face photo
+export const FACE_W = 300;               // working size of the face photo (~1.5x its size in the scene)
 export const FACE_H = Math.round(FACE_W / 0.63);
 
 export async function loadScene(base = '/scene/') {
@@ -74,7 +74,7 @@ function warpFace(frame, W, H, quad, face, seed) {
       const ix = fx | 0, iy = fy | 0, ax = fx - ix, ay = fy - iy;
       const i00 = (iy * fw + ix) * 4, i10 = i00 + 4, i01 = i00 + fw * 4, i11 = i01 + 4;
       rnd = (rnd * 9301 + 49297) % 233280;
-      const grain = (rnd / 233280 - 0.5) * 9;
+      const grain = (rnd / 233280 - 0.5) * 5;
       const o = (y * W + x) * 4;
       for (let c = 0; c < 3; c++) {
         const top = face[i00 + c] + (face[i10 + c] - face[i00 + c]) * ax;
@@ -86,14 +86,15 @@ function warpFace(frame, W, H, quad, face, seed) {
   }
 }
 
-// Make the face photo look like a print sitting in that warm 1990 bedroom.
+// Give the face photo a light warm tint so it sits in that 1990 bedroom,
+// without darkening it.
 export function gradeFace(data) {
   for (let i = 0; i < data.length; i += 4) {
     let r = data[i], g = data[i + 1], b = data[i + 2];
-    r = (r - 128) * 0.9 + 128; g = (g - 128) * 0.9 + 128; b = (b - 128) * 0.9 + 128;
-    data[i] = r * 0.94 + 10;
-    data[i + 1] = g * 0.84 + 6;
-    data[i + 2] = b * 0.7 + 4;
+    r = (r - 128) * 0.96 + 128; g = (g - 128) * 0.96 + 128; b = (b - 128) * 0.96 + 128;
+    data[i] = r * 1.0 + 6;
+    data[i + 1] = g * 0.97 + 3;
+    data[i + 2] = b * 0.9 + 2;
   }
   return data;
 }

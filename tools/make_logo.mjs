@@ -112,7 +112,7 @@ const G = {
 };
 
 const text = ['W', 'O', 'O', 'F', ' ', 'house', ' ', 'M', 'A', 'K', 'E', 'r'];
-const GAP = 5, SPACE = 9;
+const GAP = 11, SPACE = 12;   // roomy, like the Home Alone title
 let x = 0;
 const parts = [];
 for (const ch of text) {

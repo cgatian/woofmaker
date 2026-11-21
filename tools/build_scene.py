@@ -20,7 +20,9 @@ START = "00:22:56.10"      # a few frames before the cut to the photo close-up
 DURATION = 5.2             # seconds to pull from the movie
 END_AFTER_WOOF = 23 * 60 + 0.9   # stop just after Kevin says "Woof!"
 STEP = 2                   # keep every 2nd frame -> ~12 fps GIF
-OUT_W = 480                # output width in px
+OUT_W = 640                # output width in px
+GAMMA = 0.85               # <1 brightens the (fairly dark) film frames
+SHARPEN = 0.6              # unsharp-mask strength applied after downscaling
 CROP_TOP, CROP_BOTTOM = 20, 1060   # trim the letterbox bars (1080p source)
 SPRITE_COLS = 8
 # Photo corners (TL, TR, BR, BL) on the first close-up frame, in 1920x1080 px.
@@ -74,6 +76,16 @@ def track(frames):
     return hs
 
 
+_LUT = np.array([255 * (v / 255) ** GAMMA for v in range(256)]).clip(0, 255).astype(np.uint8)
+
+
+def enhance(img):
+    """Lift the shadows a little and sharpen, so the GIF reads well on a phone."""
+    img = cv2.LUT(img, _LUT)
+    blur = cv2.GaussianBlur(img, (0, 0), 1.0)
+    return cv2.addWeighted(img, 1 + SHARPEN, blur, -SHARPEN, 0)
+
+
 def thumb_mask(img, H):
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV).astype(int)
     lab = cv2.cvtColor(img, cv2.COLOR_BGR2LAB).astype(int)
@@ -121,7 +133,7 @@ def main():
     tiles, thumbs, meta = [], [], []
     for i in keep:
         img = frames[i]
-        small = cv2.resize(img[CROP_TOP:CROP_BOTTOM], (OUT_W, out_h), interpolation=cv2.INTER_AREA)
+        small = enhance(cv2.resize(img[CROP_TOP:CROP_BOTTOM], (OUT_W, out_h), interpolation=cv2.INTER_AREA))
         tiles.append(small)
         entry = {"t": round(t_of(i), 3)}
         if i < c1:
@@ -145,7 +157,7 @@ def main():
         return s
 
     os.makedirs(OUT, exist_ok=True)
-    cv2.imwrite(os.path.join(OUT, "frames.jpg"), sheet(tiles, 3), [cv2.IMWRITE_JPEG_QUALITY, 88])
+    cv2.imwrite(os.path.join(OUT, "frames.jpg"), sheet(tiles, 3), [cv2.IMWRITE_JPEG_QUALITY, 90])
     cv2.imwrite(os.path.join(OUT, "thumbs.png"), sheet(thumbs, 4), [cv2.IMWRITE_PNG_COMPRESSION, 9])
 
     # Frame delays in GIF centiseconds, alternated so the total matches real time.
