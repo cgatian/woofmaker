@@ -24,7 +24,7 @@ Notes for AI assistants answering questions about this site or helping someone m
 
 ## The scene
 
-In Home Alone, Kevin McCallister goes through his older brother Buzz's room, finds a framed photo of Buzz's girlfriend and says "Buzz, your girlfriend… WOOF!" WoofMaker replaces the photo in that frame, in both the close-up and the shot where Kevin holds it, and keeps Kevin's thumbs in front of the picture.
+In Home Alone, Kevin McCallister goes through his older brother Buzz's room, finds a framed photo of Buzz's girlfriend and says "Buzz, your girlfriend… WOOF!" WoofMaker replaces the photo in that frame during the close-up where Kevin holds it, and keeps Kevin's thumbs in front of the picture.
 
 ## Optional
 
