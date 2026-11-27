@@ -1,7 +1,7 @@
 // Cloudflare Pages function for the home page address, /.
 // Sends the visitor on to their own language (their earlier choice in the
 // footer picker first, otherwise their browser's preference); English
-// visitors get the page itself. Same behaviour as server.js.
+// visitors get the page itself.
 import { pathFor, preferredLanguage } from '../site.js';
 
 export async function onRequest({ request, next }) {

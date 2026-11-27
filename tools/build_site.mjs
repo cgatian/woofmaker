@@ -1,5 +1,5 @@
-// Builds the site as plain files in dist/, for hosts that serve files instead
-// of running server.js (Cloudflare Pages). Run with: npm run build
+// Builds the site as plain files in dist/, which is what Cloudflare Pages
+// serves. Run with: npm run build
 //
 // dist/ gets everything in public/, the page rendered once per language, the
 // GIF encoder, the sitemap, and the host's own config files (_headers,

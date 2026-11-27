@@ -1,15 +1,15 @@
 // Cloudflare Pages function for the "Woofs Created" counter: GET reads it,
-// POST adds one. Same answers as the Node server (server.js + counter.js).
+// POST adds one.
 //
 // The number lives in a Cloudflare D1 database bound to this project as "DB":
 // one table with one row. Adding one is a single UPDATE, so two visitors
 // finishing at the same moment both count. The tables are created the first
 // time they're needed; set the COUNTER_START variable beforehand to start
-// from the old site's number instead of zero.
+// from a number other than zero.
 
-// Light abuse protection, as on the Node server: per address, one count every
-// 2 seconds and at most 40 an hour. Addresses are stored hashed and removed
-// after an hour.
+// Light abuse protection: it's a fun counter, not a bank balance, but one
+// visitor shouldn't be able to spin it. Per address: one count every 2 seconds
+// and at most 40 an hour. Addresses are stored hashed and removed after an hour.
 const MIN_GAP_MS = 2000, MAX_PER_HOUR = 40, HOUR_MS = 3600_000;
 
 const json = (body, status = 200) => new Response(JSON.stringify(body), {

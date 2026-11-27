@@ -1,6 +1,6 @@
-// What the site is made of, shared by every way of serving it: the Node server
-// (server.js), the static build (tools/build_site.mjs) and the Cloudflare Pages
-// functions (functions/). Nothing in here may use Node-only modules.
+// What the site is made of, shared by the static build (tools/build_site.mjs)
+// and the Cloudflare Pages functions (functions/). Nothing in here may use
+// Node-only modules, because the functions run on Cloudflare, not in Node.
 import { LANGS, strings, pickLanguage } from './public/js/strings.js';
 
 export const CANONICAL_HOST = globalThis.process?.env?.CANONICAL_HOST || 'www.woofmaker.org';
