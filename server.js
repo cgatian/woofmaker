@@ -6,12 +6,12 @@ import { extname, join, normalize, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { gzipSync } from 'node:zlib';
 import { getCount, increment } from './counter.js';
-import { LANGS, strings, pickLanguage } from './public/js/strings.js';
+import { LANGS } from './public/js/strings.js';
+import { CANONICAL_HOST, SECURITY_HEADERS, pathFor, renderHtml, sitemap, preferredLanguage } from './site.js';
 
 const ROOT = dirname(fileURLToPath(import.meta.url));
 const PUBLIC = join(ROOT, 'public');
 const PORT = Number(process.env.PORT) || 3000;
-const CANONICAL_HOST = process.env.CANONICAL_HOST || 'www.woofmaker.org';
 
 // Extra files served from outside public/
 const ALIASES = {
@@ -35,85 +35,18 @@ const TYPES = {
 };
 const COMPRESSIBLE = new Set(['.html', '.js', '.css', '.json', '.svg', '.txt', '.xml', '.webmanifest']);
 
-const SECURITY_HEADERS = {
-  'X-Content-Type-Options': 'nosniff',
-  'Strict-Transport-Security': 'max-age=31536000',
-  'Referrer-Policy': 'strict-origin-when-cross-origin',
-  'Permissions-Policy': 'interest-cohort=()',
-  'Content-Security-Policy': [
-    "default-src 'self'",
-    "img-src 'self' blob: data: https://*.google-analytics.com https://*.googletagmanager.com",
-    "style-src 'self' https://fonts.googleapis.com",
-    "font-src https://fonts.gstatic.com",
-    "script-src 'self' https://www.googletagmanager.com",          // Google Analytics tag
-    "worker-src 'self'",
-    "connect-src 'self' blob: https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com",
-    "base-uri 'none'",
-    "form-action 'none'",
-    "frame-ancestors 'none'",
-  ].join('; '),
-};
-
 const cache = new Map();
 
 // ---------- languages ----------
-// public/index.html is a template: {{key}} is replaced with that language's text
-// from public/js/strings.js ({{a:key}} escaped for an attribute, {{j:key}} for
-// JSON). English is served at / and every other language at /<slug>/.
-const SITE = `https://${CANONICAL_HOST}`;
-const pathFor = slug => (slug === 'en' ? '/' : `/${slug}/`);
-const escAttr = v => String(v).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
-const escJson = v => JSON.stringify(String(v).replace(/<[^>]+>/g, '')).slice(1, -1).replace(/</g, '\\u003c');
+// The page in one language (see renderHtml in site.js), gzipped and cached.
 const pages = new Map();
-
 async function renderPage(slug) {
   if (pages.has(slug)) return pages.get(slug);
   const file = join(PUBLIC, 'index.html');
-  const template = await readFile(file, 'utf8');
-  const lang = LANGS[slug], t = strings(slug);
-  const vars = {
-    slug, htmlLang: lang.htmlLang, ogLocale: lang.ogLocale, url: SITE + pathFor(slug),
-    hreflang: [
-      ...Object.entries(LANGS).map(([s, l]) => `  <link rel="alternate" hreflang="${l.hreflang}" href="${SITE}${pathFor(s)}">`),
-      `  <link rel="alternate" hreflang="x-default" href="${SITE}/">`,
-    ].join('\n'),
-    langOptions: Object.entries(LANGS)
-      .map(([s, l]) => `        <option value="${s}"${s === slug ? ' selected' : ''}>${l.name}</option>`).join('\n'),
-  };
-  const html = template.replace(/\{\{(?:(a|j):)?([\w-]+)\}\}/g, (_, mod, key) => {
-    const v = key in vars ? vars[key] : t[key];
-    if (v == null) throw new Error(`index.html: no text for {{${key}}}`);
-    return mod === 'a' ? escAttr(v) : mod === 'j' ? escJson(v) : v;
-  });
-  const body = Buffer.from(html);
+  const body = Buffer.from(renderHtml(await readFile(file, 'utf8'), slug));
   const entry = { body, gz: gzipSync(body), mtime: (await stat(file)).mtime.toUTCString() };
   if (process.env.NODE_ENV === 'production') pages.set(slug, entry);
   return entry;
-}
-
-// Built from the language list, so every language is always in the sitemap.
-function sitemap() {
-  const today = new Date().toISOString().slice(0, 10);
-  const alternates = [
-    ...Object.entries(LANGS).map(([s, l]) => `    <xhtml:link rel="alternate" hreflang="${l.hreflang}" href="${SITE}${pathFor(s)}"/>`),
-    `    <xhtml:link rel="alternate" hreflang="x-default" href="${SITE}/"/>`,
-  ].join('\n');
-  const urls = Object.keys(LANGS)
-    .map(s => `  <url>\n    <loc>${SITE}${pathFor(s)}</loc>\n    <lastmod>${today}</lastmod>\n${alternates}\n  </url>`).join('\n');
-  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${urls}\n</urlset>\n`;
-}
-
-// The language a visitor to / should get: their own earlier choice (a cookie
-// set by the language picker) first, otherwise their browser's preference.
-function preferredLanguage(req) {
-  const chosen = /(?:^|;\s*)lang=([a-z-]+)/.exec(req.headers.cookie || '')?.[1];
-  if (chosen && LANGS[chosen]) return chosen;
-  const tags = (req.headers['accept-language'] || '').split(',')
-    .map(part => { const [tag, q] = part.trim().split(';q='); return { tag, q: q === undefined ? 1 : Number(q) }; })
-    .filter(x => x.tag && x.tag !== '*' && x.q > 0)
-    .sort((a, b) => b.q - a.q)
-    .map(x => x.tag);
-  return pickLanguage(tags);
 }
 
 async function resolveFile(urlPath) {
@@ -171,7 +104,7 @@ const server = createServer(async (req, res) => {
     let slug = null;
     if (url.pathname === '/index.html' || named === 'en') return redirect(301, '/' + url.search);
     if (url.pathname === '/') {
-      slug = preferredLanguage(req);
+      slug = preferredLanguage(req.headers.cookie, req.headers['accept-language']);
       if (slug !== 'en') return redirect(302, pathFor(slug) + url.search);
     } else if (named && LANGS[named]) {
       if (!url.pathname.endsWith('/')) return redirect(301, pathFor(named) + url.search);

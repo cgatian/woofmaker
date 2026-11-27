@@ -6,6 +6,8 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",
+    "build": "node tools/build_site.mjs",
+    "preview:cloudflare": "npm run build && npx wrangler pages dev dist --d1 DB --compatibility-date=2026-11-01",
     "build:scene": "python tools/build_scene.py"
   },
   "repository": {

@@ -7,7 +7,8 @@ Live at **[woofmaker.org](https://www.woofmaker.org)**. A fan-made revival of th
 ## How it works
 
 - Everything happens in the visitor's browser. Their photo is never uploaded, and the server only serves static files.
-- The one thing the server stores is the count of GIFs made, shown at the bottom of the page as "X Woofs Created", kept as a single number in a JSON file (`counter.js`), no database. On Railway the file lives on a Volume attached to the service (Railway sets `RAILWAY_VOLUME_MOUNT_PATH`), so it survives restarts and redeploys. `GET /api/count` reads it; the page sends `POST /api/count` each time a GIF is made.
+- The one thing the server stores is the count of GIFs made, shown at the bottom of the page as "X Woofs Created". `GET /api/count` reads it; the page sends `POST /api/count` each time a GIF is made. On Railway it is a single number in a JSON file (`counter.js`) on a Volume attached to the service (Railway sets `RAILWAY_VOLUME_MOUNT_PATH`), so it survives restarts and redeploys. On Cloudflare Pages it is one row in a D1 database (`functions/api/count.js`).
+- The site can be served two ways from the same source: by the Node server (`server.js`), or as plain files built into `dist/` plus two small Cloudflare Pages functions. `site.js` holds what both share (page rendering, sitemap, security headers, language choice).
 - `public/scene/` holds the pre-built scene (22:54 to 23:00.9 of the film, 12 fps, 480 px wide): a few small sprite sheets of the GIF frames, sprite sheets of Kevin's thumbs, and `scene.json` with the photo's four corners in every frame.
 - `public/js/render.js` warps the visitor's photo into those corners (a perspective transform per frame), puts the thumbs back on top, adds film-style color and grain, and draws the captions.
 - `public/js/gif-worker.js` encodes the GIF in a Web Worker with [gifenc](https://github.com/mattdesl/gifenc). The GIF is encoded once, at 360 px wide and 12 fps, and is usually a little over 1 MB because unchanged pixels are skipped between frames. The settings are the constants at the top of the file.
@@ -32,6 +33,12 @@ npm install
 npm start          # http://localhost:3000  (set PORT to change)
 ```
 
+To run the Cloudflare Pages version instead (the static build plus the functions, with a local test database):
+
+```sh
+npm run preview:cloudflare   # http://localhost:8788
+```
+
 ## Rebuild the scene from your own copy of the movie
 
 The movie isn't in this repo. To regenerate the scene assets (for example to change the clip timing in `tools/build_scene.py`):
@@ -49,6 +56,22 @@ python tools/make_og.py path/to/home-alone.mp4       # link-preview image + app 
 The repo deploys as-is: Railway runs `npm install` and then `node server.js`. The health check is `/healthz`.
 
 The main address is `www.woofmaker.org` (a CNAME to Railway). The bare `woofmaker.org` is forwarded there by Squarespace, because Squarespace allows no CNAME on the bare domain and no ALIAS while DNSSEC is on. If a request for the bare domain does reach the server, it redirects to www. Set `CANONICAL_HOST` to change the main address.
+
+## Deploy (Cloudflare Pages)
+
+`npm run build` writes the whole site to `dist/` as plain files: the page once per language, the sitemap, a 404 page, and Cloudflare's `_headers`, `_redirects` and `_routes.json`. Two functions in `functions/` cover what files can't: `index.js` sends a visitor to `/` on to their own language, and `api/count.js` is the counter. Every other request is a plain file.
+
+One-time setup in the Cloudflare dashboard:
+
+1. **Workers & Pages → Create → Pages → Connect to Git**, and pick this repo. Build command `npm run build`, build output directory `dist`.
+2. **Storage & Databases → D1 → Create** a database (any name, for example `woofmaker`).
+3. In the Pages project, **Settings → Bindings → Add → D1 database**: variable name `DB`, pointing at that database. The function creates its tables on first use.
+4. Optional: to carry over the count from the old host, add a variable `COUNTER_START` with that number under **Settings → Variables and Secrets** before the first visit.
+5. **Settings → Runtime → Fail open / closed**: choose **Fail open**, so that if the free daily functions allowance (100,000 requests) ever runs out, the pages keep being served and only the counter and the language redirect pause.
+6. Redeploy so the binding and variable take effect, then check `https://<project>.pages.dev/` and `/api/count`.
+7. **Custom domains → Set up a domain**: `www.woofmaker.org`. Then change the `www` CNAME at the DNS provider from Railway to `<project>.pages.dev`. The bare-domain forwarding stays as it is.
+
+Free-plan limits that matter here: 100,000 function requests a day (only `/` and `/api/count` count), and 100,000 database rows written a day (each GIF writes two or three).
 
 ## Legal
 
